@@ -1,7 +1,7 @@
 # discord-coingecko-price-bot
 Uses the CoinGecko API to actively display the price of a cryptocurrency via the nickname.
 
-For python3.6+. You'll need `discord.py` and `requests`.
+For python3.6+. You'll need `discord.py` and `requests`. The bot needs nickname-changing permissions.
 
 ![bots](https://i.ibb.co/9ZBfN6n/test-img.png)
 
