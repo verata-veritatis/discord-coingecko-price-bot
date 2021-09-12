@@ -13,7 +13,7 @@ from datetime import datetime as dt
 # Your bot's token goes here. This can be found on the Discord developers
 # portal.
 ################################################################################
-BOT_TOKEN = 'ODg2NDM4NzY2MzEzNjA3MTcw.YT1mbw.fz5ICMd1m2H77WZ4Z589mhKaCgs'
+BOT_TOKEN = ''
 ################################################################################
 
 print('\n---------- Flim\'s BAYC Discord Bot ----------\n')
