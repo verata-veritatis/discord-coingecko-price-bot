@@ -9,8 +9,12 @@ Open the `bot.py` file and add your desired `MARKET_ID` and `BOT_TOKEN`. The bot
 
 # bayc-opensea-floor-price-bot
 
-No market_ID necessary for this bot. Discord bot token still required. I didn't figure out how to query collections and get to BAYC but was able to do it using an address which I know owns a BAYC. There's probably a smarter way to do it without specifying 'asset_owner' but I'm n00b shadowy super coder. Learning. 
+No `MARKET_ID` necessary for this bot. Discord bot token still required. I didn't figure out how to query collections and get to BAYC but was able to do it using an address which I know owns a BAYC. There's probably a smarter way to do it without specifying 'asset_owner' but I'm n00b shadowy super coder. I'm learning. 
 
 BAYC bot shows the floor price, and for "watching" displays the 7-day average price. All other requirements for this bot match the Coingecko Price bot. 
 
 god bless
+
+# crypto-punks-floor-price-bot
+
+WIP. Dependencies: `requests` & `BeautifulSoup`. Will wrap in discord bot code for deployment in your favorite discord.  
