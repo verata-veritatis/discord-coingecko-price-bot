@@ -15,6 +15,6 @@ BAYC bot shows the floor price, and for "watching" displays the 7-day average pr
 
 # crypto-punks-floor-price-bot
 
-WIP. Dependencies: `requests` & `BeautifulSoup`. Will wrap in discord bot code for deployment in your favorite discord.  
+Dependencies: `requests` & `BeautifulSoup`. This bot uses BeautifulSoup to pull the CryptoPunks floor price from larvalabs.com/cryptopunks in ETH and USD. 
 
 god bless
