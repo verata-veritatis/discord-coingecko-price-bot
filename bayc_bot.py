@@ -75,9 +75,9 @@ async def on_ready():
                     print(f'{dt.utcnow()} | Unknown error: {e}.')
         except requests.exceptions.HTTPError as e:
             print(f'{dt.utcnow()} | HTTP error: {e}.')
-        except response.status_code == 429:
+        except ValueError:
+            print(f'{dt.utcnow()} | ValueError due to {response.status_code}. Waiting: {response.headers["Retry-After"]}.')
             await asyncio.sleep(response.headers["Retry-After"])
-            print(f'{dt.utcnow()} | 429 error. Waiting: {response.headers["Retry-After"]}.')
         finally:
             await asyncio.sleep(30)
 ################################################################################
