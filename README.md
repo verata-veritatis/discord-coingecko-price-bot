@@ -13,8 +13,8 @@ No `MARKET_ID` necessary for this bot. Discord bot token still required. I didn'
 
 BAYC bot shows the floor price, and for "watching" displays the 7-day average price. All other requirements for this bot match the Coingecko Price bot. 
 
-god bless
-
 # crypto-punks-floor-price-bot
 
 WIP. Dependencies: `requests` & `BeautifulSoup`. Will wrap in discord bot code for deployment in your favorite discord.  
+
+god bless
