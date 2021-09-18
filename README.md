@@ -1,4 +1,4 @@
-# discord-coingecko-price-bot
+# coingecko-price-bot
 Uses the CoinGecko API to actively display the price of a cryptocurrency via the nickname.
 
 For python3.6+. You'll need `discord.py` and `requests`. The bot needs nickname-changing permissions.
@@ -16,5 +16,9 @@ BAYC bot shows the floor price, and for "watching" displays the 7-day average pr
 # crypto-punks-floor-price-bot
 
 Dependencies: `requests` & `BeautifulSoup`. This bot uses BeautifulSoup to pull the CryptoPunks floor price from larvalabs.com/cryptopunks in ETH and USD. 
+
+# etherscan-gas-bot
+
+Dependencies: `requests` & `math`. This bot pulls etherscan gas data and displays the fast gwei price, confirmation time in seconds, as well as base fee & priority fee.
 
 god bless
