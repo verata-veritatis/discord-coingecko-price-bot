@@ -8,8 +8,8 @@ from datetime import datetime as dt
 ################################################################################
 # Your bot's token & Etherscan API Key go here.
 ################################################################################
-BOT_TOKEN = 'ODg4NTcxNTg0OTUwOTY4MzUw.YUUoxg.85dBU37cIHF_rvahus1-dhYLwvY'
-apikey = 'C67HPZF2EPRQ36IKWRDPMZEW5R1ZFYWQUW'
+BOT_TOKEN = ''
+apikey = ''
 ################################################################################
 
 print('\n---------- Flim\'s Etherscan Gas Bot ----------\n')
