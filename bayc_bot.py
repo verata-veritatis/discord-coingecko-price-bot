@@ -8,7 +8,7 @@ from datetime import datetime as dt
 # Your bot's token goes here. This can be found on the Discord developers
 # portal.
 ################################################################################
-BOT_TOKEN = 'ODg2NDM4NzY2MzEzNjA3MTcw.YT1mbw.4Kc2KB1yVAF77s_OberrtX2Z5gE'
+BOT_TOKEN = ''
 ################################################################################
 
 print('\n---------- Flim\'s BAYC Discord Bot ----------\n')
