@@ -74,7 +74,8 @@ async def on_ready():
                             # emoji=f'⛽',
                             name=f'Base: {suggestedBase} Priority: {fastPriority}',
                             # type=ActivityType.custom
-                            type=ActivityType.playing
+                            # type=ActivityType.playing,
+                            type=ActivityType.watching,
                         )
                     )
                 except errors.Forbidden:
@@ -86,6 +87,8 @@ async def on_ready():
                     errored_guilds.append(guild)
                 except Exception as e:
                     print(f'{dt.utcnow()} | Unknown error: {e}.')
+        except simplejson.errors.JSONDecodeError as j:
+            print(f'{dt.utcnow()} | JSONDecodeError: {j}.')
         except requests.exceptions.HTTPError as e:
             print(f'{dt.utcnow()} | HTTP error: {e}.')
         except ValueError:
@@ -95,7 +98,7 @@ async def on_ready():
             )
             await asyncio.sleep(response.headers["Retry-After"])
         finally:
-            await asyncio.sleep(10)
+            await asyncio.sleep(15)
 
 
 ################################################################################
