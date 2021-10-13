@@ -1,13 +1,11 @@
 import asyncio
 import requests
-from bs4 import BeautifulSoup
+import ssl
 
-from discord import (
-    Activity,
-    ActivityType,
-    Client,
-    errors,
-)
+from bs4 import BeautifulSoup
+from urllib.request import Request, urlopen
+
+from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
 
 ################################################################################
@@ -19,11 +17,24 @@ BOT_TOKEN = ''
 
 print('\n---------- Flim\'s Fidenza Discord Bot ----------\n')
 
+ssl._create_default_https_context = ssl._create_unverified_context
+
 token_name = 'Fidenza'
 collection = 'art-blocks'
 
 # token2 = 'Meridian'
 # collection2 = 'art-blocks-playground'
+
+hdr = {'User-Agent': 'Mozilla/5.0'}
+url = (
+    'https://opensea.io/assets/'
+    + collection
+    + '?search[sortAscending]=true&search[sortBy]=PRICE&search[stringTraits][0][name]='
+    + token_name
+    + '&search[stringTraits][0][values][0]=All%20'
+    + token_name
+    + 's'
+)
 
 ################################################################################
 # Start client.
@@ -42,37 +53,35 @@ async def on_ready():
     print(f'{dt.utcnow()} | Discord client is running.\n')
     while True:
         try:
-            response = requests.get(f'https://opensea.io/assets/art-blocks?search[sortAscending]=true&search[sortBy]=PRICE&search[stringTraits][0][name]=Fidenza&search[stringTraits][0][values][0]=All%20Fidenzas')
-            print(f'{dt.utcnow()} | response status code: {response.status_code}.')
-            soup = BeautifulSoup(response.content, 'html5lib') 
-            # If the above line causes an error, run 'pip install html5lib' or install html5lib
-            punk_stats = soup.findAll('div', attrs = {'class':'col-md-4 punk-stat'})
-            
-            # in case we want to get other stats, we iterate through all punk stats here
-            # for index, stat in enumerate(punk_stats):
-            #   print(punk_stats[index].text)
-            
-            floor = punk_stats[0].b
-            split = floor.string.split(' ETH ')
-            eth_floor = 'Ξ'+split[0]
-            usd_floor = split[1].lstrip('(').rstrip(' USD)')
+            req = Request(url, headers=hdr)
+            page = urlopen(req)
+            soup = BeautifulSoup(page, 'html5lib')
+            lowest = soup.findAll(
+                'div',
+                attrs={
+                    'class': (
+                        'Overflowreact__OverflowContainer-sc-10mm0lu-0 gjwKJf'
+                        ' Price--amount'
+                    )
+                },
+            )
+            floor = lowest[0].text.strip()
+            eth_floor = 'Ξ' + floor
             print(f'{dt.utcnow()} | {token_name} floor: {eth_floor}.')
-            print(f'{dt.utcnow()} | {token_name} floor: {usd_floor}.')
             for guild in client.guilds:
                 try:
-                    await guild.me.edit(
-                        nick=f'{token_name} {eth_floor}'
-                    )
+                    await guild.me.edit(nick=f'{token_name} {eth_floor}')
                     await client.change_presence(
                         activity=Activity(
-                            name=f'in USD: {usd_floor}',
-                            type=ActivityType.watching,
-                        ),
+                            name=f'Opensea Floor', type=ActivityType.watching
+                        )
                     )
                 except errors.Forbidden:
                     if guild not in errored_guilds:
-                        print(f'{dt.utcnow()} | {guild}:{guild.id} hasn\'t set '
-                              f'nickname permissions for the bot!')
+                        print(
+                            f'{dt.utcnow()} | {guild}:{guild.id} hasn\'t set '
+                            'nickname permissions for the bot!'
+                        )
                     errored_guilds.append(guild)
                 except Exception as e:
                     print(f'{dt.utcnow()} | Unknown error: {e}.')
@@ -84,6 +93,8 @@ async def on_ready():
             print(f'{dt.utcnow()} | TypeError: {e}.')
         finally:
             await asyncio.sleep(30)
+
+
 ################################################################################
 
 ################################################################################
