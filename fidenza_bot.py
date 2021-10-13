@@ -17,9 +17,13 @@ from datetime import datetime as dt
 BOT_TOKEN = ''
 ################################################################################
 
-print('\n---------- Flim\'s CryptoPunks Discord Bot ----------\n')
+print('\n---------- Flim\'s Fidenza Discord Bot ----------\n')
 
-token_name = 'PUNK'
+token_name = 'Fidenza'
+collection = 'art-blocks'
+
+# token2 = 'Meridian'
+# collection2 = 'art-blocks-playground'
 
 ################################################################################
 # Start client.
@@ -38,9 +42,10 @@ async def on_ready():
     print(f'{dt.utcnow()} | Discord client is running.\n')
     while True:
         try:
-            response = requests.get(f'https://www.larvalabs.com/cryptopunks')
+            response = requests.get(f'https://opensea.io/assets/art-blocks?search[sortAscending]=true&search[sortBy]=PRICE&search[stringTraits][0][name]=Fidenza&search[stringTraits][0][values][0]=All%20Fidenzas')
             print(f'{dt.utcnow()} | response status code: {response.status_code}.')
-            soup = BeautifulSoup(response.content, 'html5lib') # If this line causes an error, run 'pip install html5lib' or install html5lib
+            soup = BeautifulSoup(response.content, 'html5lib') 
+            # If the above line causes an error, run 'pip install html5lib' or install html5lib
             punk_stats = soup.findAll('div', attrs = {'class':'col-md-4 punk-stat'})
             
             # in case we want to get other stats, we iterate through all punk stats here
@@ -73,9 +78,10 @@ async def on_ready():
                     print(f'{dt.utcnow()} | Unknown error: {e}.')
         except requests.exceptions.HTTPError as e:
             print(f'{dt.utcnow()} | HTTP error: {e}.')
-        except ValueError:
-            print(f'{dt.utcnow()} | ValueError due to {response.status_code}. Waiting: {response.headers["Retry-After"]}.')
-            await asyncio.sleep(response.headers["Retry-After"])
+        except ValueError as e:
+            print(f'{dt.utcnow()} | ValueError: {e}.')
+        except TypeError as e:
+            print(f'{dt.utcnow()} | TypeError: {e}.')
         finally:
             await asyncio.sleep(30)
 ################################################################################
