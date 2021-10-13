@@ -66,15 +66,18 @@ async def on_ready():
                 },
             )
             floor = lowest[0].text.strip()
+            num = soup.findAll('div', attrs={'class': 'AssetCardFooter--name'})[
+                0
+            ].text.split()
+            print(f'{dt.utcnow()} | floor text is: {floor}.')
+            print(f'{dt.utcnow()} | name is: {num[1]}.')
             eth_floor = 'Ξ' + floor
             print(f'{dt.utcnow()} | {token_name} floor: {eth_floor}.')
             for guild in client.guilds:
                 try:
                     await guild.me.edit(nick=f'{token_name} {eth_floor}')
                     await client.change_presence(
-                        activity=Activity(
-                            name=f'Opensea Floor', type=ActivityType.watching
-                        )
+                        activity=Activity(name=f'{num[1]}', type=ActivityType.watching)
                     )
                 except errors.Forbidden:
                     if guild not in errored_guilds:
