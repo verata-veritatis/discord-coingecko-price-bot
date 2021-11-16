@@ -16,8 +16,6 @@ collection = "boredapeyachtclub"
 print(f"\n---------- Flim's {ticker} Discord Bot ----------\n")
 
 url = f"https://api.opensea.io/api/v1/collection/{collection}/stats"
-print(url)
-
 ################################################################################
 # Start client.
 ################################################################################
