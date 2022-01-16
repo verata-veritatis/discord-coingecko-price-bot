@@ -10,7 +10,7 @@ from datetime import datetime as dt
 # Your bot's token goes here. This can be found on the Discord developers
 # portal.
 ################################################################################
-BOT_TOKEN = "OTMyMzE3MDM0NDU5NTcwMjI2.YeRN5g.EOIRFIoJEViWo_JhUxPOxYQR0Kg"
+BOT_TOKEN = ""
 ################################################################################
 token_name = "bridgoor"
 # token_name = "halloween"
