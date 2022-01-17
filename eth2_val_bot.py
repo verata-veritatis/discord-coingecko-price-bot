@@ -1,5 +1,6 @@
 import asyncio
 import requests
+from bs4 import BeautifulSoup
 
 from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
@@ -10,17 +11,19 @@ from datetime import datetime as dt
 ################################################################################
 BOT_TOKEN = ""
 ################################################################################
-ticker = "Doodles"
-collection = "doodles-official"
-print(f"\n---------- Flim's {ticker} Discord Bot ----------\n")
 
-url = f"https://api.opensea.io/api/v1/collection/{collection}/stats"
+print("\n---------- Flim's ETH2 Validator Discord Bot ----------\n")
+
+token_name = "flimnode"
+val_id = "195271"
+
 ################################################################################
 # Start client.
 ################################################################################
 print(f"{dt.utcnow()} | Starting Discord client.")
 client = Client()
 ################################################################################
+
 
 ################################################################################
 # Client's on_ready event function. We do everything here.
@@ -31,18 +34,40 @@ async def on_ready():
     print(f"{dt.utcnow()} | Discord client is running.\n")
     while True:
         try:
-            response = requests.request("GET", url)
-            floor_price = response.json()["stats"]["floor_price"]
-            pctchng = response.json()["stats"]["seven_day_average_price"]
+
+            response = requests.get(f"https://beaconcha.in/validator/{val_id}")
             print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-            print(f"{dt.utcnow()} | {ticker} floor price: Ξ{floor_price}.")
-            print(f"{dt.utcnow()} | {ticker} 7d avg. price: Ξ{round(pctchng,2)}.")
+            soup = BeautifulSoup(
+                response.content, "html5lib"
+            )  # If this line causes an error, run 'pip install html5lib' or install html5lib
+
+            blocks = soup.find("span", attrs={"id": "blockCount"})
+            block_stats = blocks.attrs["title"].split("Blocks (")[1]
+            b_prop = block_stats.split(", ")[0].split(": ")
+            b_miss = block_stats.split(", ")[1].split(": ")
+            b_orph = block_stats.split(", ")[2].split(": ")
+            b_sche = block_stats.split(", ")[3].split(": ")
+
+            print(f"{dt.utcnow()} | blocks: {block_stats}.")
+            # print(f"{dt.utcnow()} | b_prop: {b_prop}.")
+
+            attestations = soup.find("span", attrs={"id": "attestationCount"})
+            attestation_stats = attestations.attrs["title"].split(
+                "Attestation Assignments ("
+            )[1]
+            a_exec = attestation_stats.split(", ")[0].split(": ")
+            a_miss = attestation_stats.split(", ")[1].split(": ")
+            a_orph = attestation_stats.split(", ")[2].split(": ")
+
+            print(f"{dt.utcnow()} | attestations: {attestation_stats}.")
+            # print(f"{dt.utcnow()} | a_exec: {a_exec}.\n")
+
             for guild in client.guilds:
                 try:
-                    await guild.me.edit(nick=f"{ticker} Ξ{round(floor_price,2):,}")
+                    await guild.me.edit(nick=f"{token_name} blocks: {b_prop[1]}")
                     await client.change_presence(
                         activity=Activity(
-                            name=f"7d avg.: Ξ{round(pctchng,2)}",
+                            name=f"attestations: {a_exec[1]}",
                             type=ActivityType.watching,
                         )
                     )

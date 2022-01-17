@@ -56,17 +56,17 @@ async def on_ready():
                         )
                     errored_guilds.append(guild)
                 except Exception as e:
-                    print(f'{dt.utcnow()} | Unknown error: {e}.')
+                    print(f"{dt.utcnow()} | Unknown error: {e}.")
         except requests.exceptions.HTTPError as e:
-            print(f'{dt.utcnow()} | HTTP error: {e}.')
+            print(f"{dt.utcnow()} | HTTP error: {e}.")
         except ValueError as e:
-            print(f'{dt.utcnow()} | ValueError: {e}.')
+            print(f"{dt.utcnow()} | ValueError: {e}.")
         except TypeError as e:
-            print(f'{dt.utcnow()} | TypeError: {e}.')
+            print(f"{dt.utcnow()} | TypeError: {e}.")
         except OSError as e:
-            print(f'{dt.utcnow()} | OSError: {e}.')
+            print(f"{dt.utcnow()} | OSError: {e}.")
         except Exception as e:
-            print(f'{dt.utcnow()} | Unknown error: {e}.')
+            print(f"{dt.utcnow()} | Unknown error: {e}.")
         finally:
             await asyncio.sleep(30)
 

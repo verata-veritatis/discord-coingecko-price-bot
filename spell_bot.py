@@ -5,22 +5,41 @@ from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
 
 ################################################################################
+# Market ID goes here. This can be found by going to the token's page on
+# CoinGecko ex. --> https://www.coingecko.com/en/coins/<id>.
+################################################################################
+MARKET_ID = "spell-token"
+################################################################################
+
+################################################################################
 # Your bot's token goes here. This can be found on the Discord developers
 # portal.
 ################################################################################
 BOT_TOKEN = ""
 ################################################################################
-ticker = "Doodles"
-collection = "doodles-official"
-print(f"\n---------- Flim's {ticker} Discord Bot ----------\n")
 
-url = f"https://api.opensea.io/api/v1/collection/{collection}/stats"
+print("\n---------- V3 DISCORD x COINGECKO BOT ----------\n")
+
+################################################################################
+# Sanity check for market ID.
+################################################################################
+print(f"{dt.utcnow()} | Checking CoinGecko for market ID.")
+r = requests.get(f"https://api.coingecko.com/api/v3/coins/{MARKET_ID}")
+if r.status_code > 400:
+    print(f"{dt.utcnow()} | Could not find market. Exiting...\n")
+    exit()
+else:
+    token_name = r.json()["symbol"].upper()
+    print(f"{dt.utcnow()} | Found {token_name}.")
+################################################################################
+
 ################################################################################
 # Start client.
 ################################################################################
 print(f"{dt.utcnow()} | Starting Discord client.")
 client = Client()
 ################################################################################
+
 
 ################################################################################
 # Client's on_ready event function. We do everything here.
@@ -31,19 +50,22 @@ async def on_ready():
     print(f"{dt.utcnow()} | Discord client is running.\n")
     while True:
         try:
-            response = requests.request("GET", url)
-            floor_price = response.json()["stats"]["floor_price"]
-            pctchng = response.json()["stats"]["seven_day_average_price"]
+            response = requests.get(
+                f"https://api.coingecko.com/api/v3/coins/{MARKET_ID}"
+            )
             print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-            print(f"{dt.utcnow()} | {ticker} floor price: Ξ{floor_price}.")
-            print(f"{dt.utcnow()} | {ticker} 7d avg. price: Ξ{round(pctchng,2)}.")
+            price = response.json()["market_data"]["current_price"]["usd"]
+            print(f"{dt.utcnow()} | {token_name} price: {price}.")
+            pctchng = response.json()["market_data"][
+                "price_change_percentage_24h_in_currency"
+            ]["usd"]
+            print(f"{dt.utcnow()} | {token_name} 24hr % change: {round(pctchng,2)}%.")
             for guild in client.guilds:
                 try:
-                    await guild.me.edit(nick=f"{ticker} Ξ{round(floor_price,2):,}")
+                    await guild.me.edit(nick=f"{token_name} ${round(price,5):,}")
                     await client.change_presence(
                         activity=Activity(
-                            name=f"7d avg.: Ξ{round(pctchng,2)}",
-                            type=ActivityType.watching,
+                            name=f"24h: {round(pctchng,2)}%", type=ActivityType.watching
                         )
                     )
                 except errors.Forbidden:
@@ -55,6 +77,8 @@ async def on_ready():
                     errored_guilds.append(guild)
                 except Exception as e:
                     print(f"{dt.utcnow()} | Unknown error: {e}.")
+        except requests.exceptions.HTTPError as e:
+            print(f"{dt.utcnow()} | HTTP error: {e}.")
         except ValueError as e:
             print(f"{dt.utcnow()} | ValueError: {e}.")
         except TypeError as e:
