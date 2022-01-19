@@ -40,9 +40,9 @@ async def on_ready():
             response = requests.get(
                             f"https://api.dopex.io/api/v1/tvl?include={contract}"
                         )
-            tvl = round(float(response.json()["tvl"]))
+            tvl = round(float(response.json()["tvl"])/1000000,2)
             print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-            print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}.")
+            print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
             for guild in client.guilds:
                 try:
                     await guild.me.edit(nick=f"{token_name.upper()} ${tvl:,}")
