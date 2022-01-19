@@ -45,7 +45,7 @@ async def on_ready():
             print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
             for guild in client.guilds:
                 try:
-                    await guild.me.edit(nick=f"{contract.upper()} ${tvl:,}M")
+                    await guild.me.edit(nick=f"{token_name.upper()} ${tvl:,}M")
                     await client.change_presence(
                         activity=Activity(
                             name=f"Epoch: {epoch} | End: {epoch_end}", type=ActivityType.watching
