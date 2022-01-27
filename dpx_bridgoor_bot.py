@@ -41,12 +41,15 @@ async def on_ready():
             soup = BeautifulSoup(page, "html5lib")
             script = soup.find(id="__NEXT_DATA__").string
             json_data = json.loads(script)
-            floor = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
+            floor_dict = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
                 "market_floor_price"
             ]
             vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
                 "market_vol"
             ]
+
+            floor = floor_dict.pop('0x0000000000000000000000000000000000000000')
+
             print(f"{dt.utcnow()} | floor: {floor}.")
             print(f"{dt.utcnow()} | volume: {vol}.")
 
