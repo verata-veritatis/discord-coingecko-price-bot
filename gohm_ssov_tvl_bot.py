@@ -7,8 +7,8 @@ from datetime import datetime as dt
 ################################################################################
 token_name = 'gohm'
 contract = token_name + '-ssov'
-epoch = 3
-epoch_end = '28-Jan'
+epoch = 4
+epoch_month = 'Feb 2022'
 ################################################################################
 
 ################################################################################
@@ -48,7 +48,7 @@ async def on_ready():
                     await guild.me.edit(nick=f"{token_name.upper()} ${tvl:,}M")
                     await client.change_presence(
                         activity=Activity(
-                            name=f"Epoch: {epoch} | End: {epoch_end}", type=ActivityType.watching
+                            name=f"Epoch: {epoch} | {epoch_month}", type=ActivityType.watching
                         )
                     )
                 except errors.Forbidden:
