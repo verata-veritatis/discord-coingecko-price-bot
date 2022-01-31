@@ -49,7 +49,6 @@ async def on_ready():
                     await client.change_presence(
                         activity=Activity(
                             name=f"Epoch: {epoch} | {epoch_month}", type=ActivityType.watching
-                            type=ActivityType.watching,
                         )
                     )
                 except errors.Forbidden:
