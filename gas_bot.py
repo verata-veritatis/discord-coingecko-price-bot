@@ -87,16 +87,10 @@ async def on_ready():
                     errored_guilds.append(guild)
                 except Exception as e:
                     print(f"{dt.utcnow()} | Unknown error: {e}.")
-        except simplejson.errors.JSONDecodeError as j:
-            print(f"{dt.utcnow()} | JSONDecodeError: {j}.")
+        except ValueError as e:
+            print(f"{dt.utcnow()} | ValueError: {e}.")
         except requests.exceptions.HTTPError as e:
             print(f"{dt.utcnow()} | HTTP error: {e}.")
-        except ValueError:
-            print(
-                f"{dt.utcnow()} | ValueError due to {response.status_code}. Waiting:"
-                f' {response.headers["Retry-After"]}.'
-            )
-            await asyncio.sleep(response.headers["Retry-After"])
         finally:
             await asyncio.sleep(60)
 
