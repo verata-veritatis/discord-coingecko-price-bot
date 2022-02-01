@@ -8,7 +8,7 @@ from datetime import datetime as dt
 token_name = "dpx"
 contract = token_name + "-ssov"
 epoch = 4
-epoch_end = "28-Jan"
+epoch_month = "Feb 2022"
 ################################################################################
 
 ################################################################################
@@ -48,7 +48,7 @@ async def on_ready():
                     await guild.me.edit(nick=f"{token_name.upper()} ${tvl:,}M")
                     await client.change_presence(
                         activity=Activity(
-                            name=f"Epoch: {epoch} | End: {epoch_end}",
+                            name=f"Epoch: {epoch} | {epoch_month}",
                             type=ActivityType.watching,
                         )
                     )
@@ -70,7 +70,7 @@ async def on_ready():
         except Exception as e:
             print(f"{dt.utcnow()} | Unknown error: {e}.")
         finally:
-            await asyncio.sleep(30)
+            await asyncio.sleep(60)
 
 
 ################################################################################

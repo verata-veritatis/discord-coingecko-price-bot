@@ -8,16 +8,16 @@ from datetime import datetime as dt
 ################################################################################
 # Your bot's token & Etherscan API Key go here.
 ################################################################################
-BOT_TOKEN = ''
-apikey = ''
+BOT_TOKEN = ""
+apikey = ""
 ################################################################################
 
-print('\n---------- Flim\'s Etherscan Gas Bot ----------\n')
+print("\n---------- Flim's Etherscan Gas Bot ----------\n")
 
 ################################################################################
 # Start client.
 ################################################################################
-print(f'{dt.utcnow()} | Starting Discord client.')
+print(f"{dt.utcnow()} | Starting Discord client.")
 client = Client()
 ################################################################################
 
@@ -28,51 +28,51 @@ client = Client()
 @client.event
 async def on_ready():
     errored_guilds = []
-    print(f'{dt.utcnow()} | Discord client is running.\n')
+    print(f"{dt.utcnow()} | Discord client is running.\n")
     while True:
         try:
             r = requests.get(
-                'https://api.etherscan.io/api'
-                '?module=gastracke'
-                'r&action=gasorac'
-                f'le&apikey={apikey}'
+                "https://api.etherscan.io/api"
+                "?module=gastracke"
+                "r&action=gasorac"
+                f"le&apikey={apikey}"
             )
 
             # parse response
-            fastGas = int(r.json()['result']['FastGasPrice'])
-            rawSuggestedBase = r.json()['result']['suggestBaseFee']
-            suggestedBase = math.floor(float(r.json()['result']['suggestBaseFee']))
+            fastGas = int(r.json()["result"]["FastGasPrice"])
+            rawSuggestedBase = r.json()["result"]["suggestBaseFee"]
+            suggestedBase = math.floor(float(r.json()["result"]["suggestBaseFee"]))
 
             # check values
-            print(f'{dt.utcnow()} | status code: {r.status_code}.')
-            print(f'{dt.utcnow()} | suggested base fee: {suggestedBase}.')
-            print(f'{dt.utcnow()} | fast gas: {fastGas}.')
+            print(f"{dt.utcnow()} | status code: {r.status_code}.")
+            print(f"{dt.utcnow()} | suggested base fee: {suggestedBase}.")
+            print(f"{dt.utcnow()} | fast gas: {fastGas}.")
 
             # convert gwei to wei
             fastGasWei = fastGas * 1e9
-            print(f'{dt.utcnow()} | fast gas wei : {fastGasWei}.')
+            print(f"{dt.utcnow()} | fast gas wei : {fastGasWei}.")
 
             # get priority fees
             fastPriority = fastGas % suggestedBase
-            print(f'{dt.utcnow()} | fast priority: {fastPriority}.')
+            print(f"{dt.utcnow()} | fast priority: {fastPriority}.")
 
             r2 = requests.get(
-                'https://api.etherscan.io/api'
-                '?module=gastracker'
-                '&action=gasestimate'
-                f'&gasprice={str(round(fastGasWei))}'
-                f'&apikey={apikey}'
+                "https://api.etherscan.io/api"
+                "?module=gastracker"
+                "&action=gasestimate"
+                f"&gasprice={str(round(fastGasWei))}"
+                f"&apikey={apikey}"
             )
 
-            fastGasTime = r2.json()['result']
-            print(f'{dt.utcnow()} | fast gas confirmation in seconds: {fastGasTime}.')
+            fastGasTime = r2.json()["result"]
+            print(f"{dt.utcnow()} | fast gas confirmation in seconds: {fastGasTime}.")
             for guild in client.guilds:
                 try:
-                    await guild.me.edit(nick=f'{fastGas:,} gwei ~{fastGasTime} sec')
+                    await guild.me.edit(nick=f"{fastGas:,} gwei ~{fastGasTime} sec")
                     await client.change_presence(
                         activity=Activity(
                             # emoji=f'⛽',
-                            name=f'Base: {suggestedBase} Priority: {fastPriority}',
+                            name=f"Base: {suggestedBase} Priority: {fastPriority}",
                             # type=ActivityType.custom
                             # type=ActivityType.playing,
                             type=ActivityType.watching,
@@ -81,24 +81,24 @@ async def on_ready():
                 except errors.Forbidden:
                     if guild not in errored_guilds:
                         print(
-                            f'{dt.utcnow()} | {guild}:{guild.id} hasn\'t set '
-                            'nickname permissions for the bot!'
+                            f"{dt.utcnow()} | {guild}:{guild.id} hasn't set "
+                            "nickname permissions for the bot!"
                         )
                     errored_guilds.append(guild)
                 except Exception as e:
-                    print(f'{dt.utcnow()} | Unknown error: {e}.')
+                    print(f"{dt.utcnow()} | Unknown error: {e}.")
         except simplejson.errors.JSONDecodeError as j:
-            print(f'{dt.utcnow()} | JSONDecodeError: {j}.')
+            print(f"{dt.utcnow()} | JSONDecodeError: {j}.")
         except requests.exceptions.HTTPError as e:
-            print(f'{dt.utcnow()} | HTTP error: {e}.')
+            print(f"{dt.utcnow()} | HTTP error: {e}.")
         except ValueError:
             print(
-                f'{dt.utcnow()} | ValueError due to {response.status_code}. Waiting:'
+                f"{dt.utcnow()} | ValueError due to {response.status_code}. Waiting:"
                 f' {response.headers["Retry-After"]}.'
             )
             await asyncio.sleep(response.headers["Retry-After"])
         finally:
-            await asyncio.sleep(15)
+            await asyncio.sleep(60)
 
 
 ################################################################################

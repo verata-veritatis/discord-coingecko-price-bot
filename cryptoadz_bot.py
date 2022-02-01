@@ -66,7 +66,7 @@ async def on_ready():
         except Exception as e:
             print(f"{dt.utcnow()} | Unknown error: {e}.")
         finally:
-            await asyncio.sleep(30)
+            await asyncio.sleep(60)
 
 
 ################################################################################

@@ -5,10 +5,10 @@ from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
 
 ################################################################################
-token_name = 'gohm'
-contract = token_name + '-ssov'
-epoch = 3
-epoch_end = '28-Jan'
+token_name = "gohm"
+contract = token_name + "-ssov"
+epoch = 4
+epoch_month = "Feb 2022"
 ################################################################################
 
 ################################################################################
@@ -38,9 +38,9 @@ async def on_ready():
     while True:
         try:
             response = requests.get(
-                            f"https://api.dopex.io/api/v1/tvl?include={contract}"
-                        )
-            tvl = round(float(response.json()["tvl"])/1000000,2)
+                f"https://api.dopex.io/api/v1/tvl?include={contract}"
+            )
+            tvl = round(float(response.json()["tvl"]) / 1000000, 2)
             print(f"{dt.utcnow()} | response status code: {response.status_code}.")
             print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
             for guild in client.guilds:
@@ -48,7 +48,8 @@ async def on_ready():
                     await guild.me.edit(nick=f"{token_name.upper()} ${tvl:,}M")
                     await client.change_presence(
                         activity=Activity(
-                            name=f"Epoch: {epoch} | End: {epoch_end}", type=ActivityType.watching
+                            name=f"Epoch: {epoch} | {epoch_month}",
+                            type=ActivityType.watching,
                         )
                     )
                 except errors.Forbidden:
@@ -69,7 +70,7 @@ async def on_ready():
         except Exception as e:
             print(f"{dt.utcnow()} | Unknown error: {e}.")
         finally:
-            await asyncio.sleep(30)
+            await asyncio.sleep(60)
 
 
 ################################################################################
