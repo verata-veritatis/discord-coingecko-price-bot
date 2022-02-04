@@ -49,7 +49,7 @@ for i in range(len(MARKET_IDS)):
         temp = MARKET_IDS[i]
         MARKET_IDS[i] = "ethereum"
     elif MARKET_IDS[i] == "JONES Mcap":
-        temp = "Mcap"
+        temp = MARKET_IDS[i]
         MARKET_IDS[i] = "jones-dao"
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{MARKET_IDS[i]}")
@@ -58,7 +58,7 @@ for i in range(len(MARKET_IDS)):
         print(f"{dt.utcnow()} | Could not find {MARKET_IDS[i]}. Exiting...\n")
         exit()
     else:
-        if temp in ["ETH/BTC","Mcap"]:
+        if temp in ["ETH/BTC","JONES Mcap"]:
             token_name = temp
             temp = ""
         else:
@@ -94,7 +94,7 @@ async def on_ready():
                     pctchng = response.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ]["btc"]
-                elif tickers[i] == "Mcap":
+                elif tickers[i] == "JONES Mcap":
                     price = response.json()["market_data"]["market_cap"]["usd"]
                     pctchng = response.json()["market_data"][
                         "fully_diluted_valuation"
@@ -105,13 +105,13 @@ async def on_ready():
                         "price_change_percentage_24h_in_currency"
                     ]["usd"]
                 print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-                if tickers[i] == "Mcap":
-                    print(f"{dt.utcnow()} | JONES: {price:,}.")
+                if tickers[i] == "JONES Mcap":
+                    print(f"{dt.utcnow()} | {tickers[i]}: {price:,}.")
                 else:
-                    print(f"{dt.utcnow()} | {tickers[i]} price: {price}.")
-                if tickers[i] == "Mcap":
+                    print(f"{dt.utcnow()} | {tickers[i]} price: ${price}.")
+                if tickers[i] == "JONES Mcap":
                     print(
-                        f"{dt.utcnow()} | JONES FDV: {pctchng:,}.\n"
+                        f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n"
                     )
                 else:
                     print(
@@ -123,11 +123,15 @@ async def on_ready():
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ₿{round(float(price), 4)}"
                             )
+                        elif tickers[i] == "JONES Mcap":
+                            await guild.me.edit(
+                                nick=f"Mcap ${round(price,2):,}"
+                            )
                         else:
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ${round(price,2):,}"
                             )
-                        if tickers[i] == "Mcap":
+                        if tickers[i] == "JONES Mcap":
                             await clients[i].change_presence(
                                 activity=Activity(
                                     name=f"FDV: ${round(pctchng,2):,}",
