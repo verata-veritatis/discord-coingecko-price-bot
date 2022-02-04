@@ -1,3 +1,17 @@
+################################################################################
+# originally forked from
+# https://github.com/verata-veritatis/discord-coingecko-price-bot
+#
+# rebuilt & refactored with <3 by:
+# flim.eth
+#
+# questions? reach out
+# twitter.com/0xflim
+# 0xflim@pm.me
+#
+# if this is helpful to you, please consider donating:
+# 0x8d6fc57487ade3738c2baf3437b63d35420db74d (or flim.eth)
+################################################################################
 import asyncio
 import requests
 import tokens  # gitignore dictionary, holds CG API names & Discord API tokens
@@ -27,29 +41,35 @@ print("\n---------- V4 Flim's Discord x CoinGecko Multibot ----------\n")
 # Sanity check for market IDs.
 ################################################################################
 print(f"{dt.utcnow()} | Checking CoinGecko for market IDs.")
-print(MARKET_IDS)
-print(BOT_TOKENS)
 tickers = []
+temp = ""
 
 for i in range(len(MARKET_IDS)):
-    r = requests.get(f"https://api.coingecko.com/api/v3/coins/{MARKET_IDS[i]}")
+    if MARKET_IDS[i] == "ETH/BTC":
+        temp = MARKET_IDS[i]
+        MARKET_IDS[i] = "ethereum"
+    else:
+        r = requests.get(f"https://api.coingecko.com/api/v3/coins/{MARKET_IDS[i]}")
+    time.sleep(0.1)
     if r.status_code > 400:
         print(f"{dt.utcnow()} | Could not find {MARKET_IDS[i]}. Exiting...\n")
         exit()
     else:
-        token_name = r.json()["symbol"].upper()
+        if temp == "ETH/BTC":
+            token_name = temp
+            temp = ""
+        else:
+            token_name = r.json()["symbol"].upper()
         print(f"{dt.utcnow()} | Found {token_name}.")
         tickers.append(token_name)
 ################################################################################
 # Start clients.
 ################################################################################
-print(f"{dt.utcnow()} | Starting Discord bot army of {len(MARKET_IDS)}.")
+print(f"\n{dt.utcnow()} | Starting Discord bot army of {len(MARKET_IDS)}.\n")
 clients = []
 
 for i in range(len(MARKET_IDS)):
     clients.append(Client())
-    print(f"{dt.utcnow()} | Started {MARKET_IDS[i]} bot.")
-print(clients)
 ################################################################################
 # Client's on_ready event function. We do everything here.
 ################################################################################
@@ -59,27 +79,40 @@ client = clients[i]
 @client.event
 async def on_ready():
     errored_guilds = []
-    print(f"{dt.utcnow()} | Discord client is running.\n")
+    print(f"{dt.utcnow()} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
             try:
                 response = requests.get(
                     f"https://api.coingecko.com/api/v3/coins/{MARKET_IDS[i]}"
                 )
-                price = response.json()["market_data"]["current_price"]["usd"]
-                pctchng = response.json()["market_data"][
-                    "price_change_percentage_24h_in_currency"
-                ]["usd"]
+                if tickers[i] == "ETH/BTC":
+                    price = response.json()["market_data"]["current_price"]["btc"]
+                    pctchng = response.json()["market_data"][
+                        "price_change_percentage_24h_in_currency"
+                    ]["btc"]
+                else:
+                    price = response.json()["market_data"]["current_price"]["usd"]
+                    pctchng = response.json()["market_data"][
+                        "price_change_percentage_24h_in_currency"
+                    ]["usd"]
                 print(f"{dt.utcnow()} | response status code: {response.status_code}.")
                 print(f"{dt.utcnow()} | {tickers[i]} price: {price}.")
-                print(f"{dt.utcnow()} | client: {clients[i]}.")
-                print(f"{dt.utcnow()} | token: {BOT_TOKENS[i]}.")
+                # print(f"{dt.utcnow()} | client: {clients[i]}.")
+                # print(f"{dt.utcnow()} | token: {BOT_TOKENS[i]}.\n")
                 print(
-                    f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%."
+                    f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
                 )
                 for guild in clients[i].guilds:
                     try:
-                        await guild.me.edit(nick=f"{tickers[i]} ${round(price,2):,}")
+                        if tickers[i] == "ETH/BTC":
+                            await guild.me.edit(
+                                nick=f"{tickers[i]} ₿{round(float(price), 4)}"
+                            )
+                        else:
+                            await guild.me.edit(
+                                nick=f"{tickers[i]} ${round(price,2):,}"
+                            )
                         await clients[i].change_presence(
                             activity=Activity(
                                 name=f"24h: {round(pctchng,2)}%",
