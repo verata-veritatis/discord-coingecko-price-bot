@@ -48,14 +48,17 @@ for i in range(len(MARKET_IDS)):
     if MARKET_IDS[i] == "ETH/BTC":
         temp = MARKET_IDS[i]
         MARKET_IDS[i] = "ethereum"
+    elif MARKET_IDS[i] == "JONES Mcap":
+        temp = "Mcap"
+        MARKET_IDS[i] = "jones-dao"
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{MARKET_IDS[i]}")
-    time.sleep(0.1)
+    time.sleep(0.3)
     if r.status_code > 400:
         print(f"{dt.utcnow()} | Could not find {MARKET_IDS[i]}. Exiting...\n")
         exit()
     else:
-        if temp == "ETH/BTC":
+        if temp in ["ETH/BTC","Mcap"]:
             token_name = temp
             temp = ""
         else:
@@ -91,18 +94,29 @@ async def on_ready():
                     pctchng = response.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ]["btc"]
+                elif tickers[i] == "Mcap":
+                    price = response.json()["market_data"]["market_cap"]["usd"]
+                    pctchng = response.json()["market_data"][
+                        "fully_diluted_valuation"
+                    ]["usd"]
                 else:
                     price = response.json()["market_data"]["current_price"]["usd"]
                     pctchng = response.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ]["usd"]
                 print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-                print(f"{dt.utcnow()} | {tickers[i]} price: {price}.")
-                # print(f"{dt.utcnow()} | client: {clients[i]}.")
-                # print(f"{dt.utcnow()} | token: {BOT_TOKENS[i]}.\n")
-                print(
-                    f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
-                )
+                if tickers[i] == "Mcap":
+                    print(f"{dt.utcnow()} | JONES: {price:,}.")
+                else:
+                    print(f"{dt.utcnow()} | {tickers[i]} price: {price}.")
+                if tickers[i] == "Mcap":
+                    print(
+                        f"{dt.utcnow()} | JONES FDV: {pctchng:,}.\n"
+                    )
+                else:
+                    print(
+                        f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
+                    )
                 for guild in clients[i].guilds:
                     try:
                         if tickers[i] == "ETH/BTC":
@@ -113,12 +127,20 @@ async def on_ready():
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ${round(price,2):,}"
                             )
-                        await clients[i].change_presence(
-                            activity=Activity(
-                                name=f"24h: {round(pctchng,2)}%",
-                                type=ActivityType.watching,
+                        if tickers[i] == "Mcap":
+                            await clients[i].change_presence(
+                                activity=Activity(
+                                    name=f"FDV: ${round(pctchng,2):,}",
+                                    type=ActivityType.watching,
+                                )
                             )
-                        )
+                        else:
+                            await clients[i].change_presence(
+                                activity=Activity(
+                                    name=f"24h: {round(pctchng,2)}%",
+                                    type=ActivityType.watching,
+                                )
+                            )
                     except errors.Forbidden:
                         if guild not in errored_guilds:
                             print(
