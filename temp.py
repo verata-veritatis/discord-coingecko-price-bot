@@ -11,16 +11,24 @@ from datetime import datetime as dt
 # token_name = "halloween"
 ################################################################################
 
-contract = 'dpx-ssov'
+r = requests.get(
+    # f"https://api.opensea.io/api/v1/collection/{attributes[i][0]}/stats"
+    f"https://api.opensea.io/api/v1/collection/boredapeyachtclub/"
+)
+temp = r.json()["collection"]["primary_asset_contracts"][0]["symbol"]
 
-response = requests.get(
-                f"https://api.dopex.io/api/v1/tvl?include={contract}"
-            )
-tvl = round(float(response.json()["tvl"])/1000000,2)
+print(temp)
 
-print(f"{dt.utcnow()} | response: {response.json()}.")
-print(f"{dt.utcnow()} | response status code: {response.status_code}.")
-print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
+# contract = "dpx-ssov"
+
+# response = requests.get(
+#                 f"https://api.dopex.io/api/v1/tvl?include={contract}"
+#             )
+# tvl = round(float(response.json()["tvl"])/1000000,2)
+
+# print(f"{dt.utcnow()} | response: {response.json()}.")
+# print(f"{dt.utcnow()} | response status code: {response.status_code}.")
+# print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
 
 # site = f"https://tofunft.com/collection/dopex-{token_name}/items"
 # hdr = {"User-Agent": "Mozilla/5.0"}
