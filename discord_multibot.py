@@ -16,6 +16,7 @@ import asyncio
 import requests
 import tokens  # gitignore dictionary, holds CG API names & Discord API tokens
 import time
+from bs4 import BeautifulSoup
 
 from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
@@ -51,6 +52,9 @@ for i in range(len(bot_tokens)):
         token_name = r.json()["collection"]["primary_asset_contracts"][0][
             "symbol"
         ].upper()
+    elif attributes[i][1] == "larvalabs":
+        r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+        token_name = attributes[i][0].upper()
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
         token_name = r.json()["symbol"].upper()
@@ -87,6 +91,8 @@ async def on_ready():
                     response = requests.get(
                         f"https://api.opensea.io/api/v1/collection/{attributes[i][0]}/stats"
                     )
+                elif attributes[i][1] == "larvalabs":
+                    response = requests.get(f"https://www.larvalabs.com/cryptopunks")
                 else:
                     response = requests.get(
                         f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}"
@@ -102,6 +108,17 @@ async def on_ready():
                 elif attributes[i][1] == "opensea":
                     floor_price = response.json()["stats"][attributes[i][2]]
                     pctchng = response.json()["stats"]["seven_day_average_price"]
+                elif attributes[i][1] == "larvalabs":
+                    soup = BeautifulSoup(
+                        response.content, "html5lib"
+                    )  # If this line causes an error, run 'pip install html5lib' or install html5lib
+                    punk_stats = soup.findAll(
+                        "div", attrs={"class": "col-md-4 punk-stat"}
+                    )
+                    floor = punk_stats[0].b
+                    split = floor.string.split(" ETH ")
+                    eth_floor = "Ξ" + split[0]
+                    usd_floor = split[1].lstrip("(").rstrip(" USD)")
                 else:
                     price = response.json()["market_data"][attributes[i][2]][
                         attributes[i][3]
@@ -127,6 +144,9 @@ async def on_ready():
                     print(
                         f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
                     )
+                elif attributes[i][1] == "larvalabs":
+                    print(f"{dt.utcnow()} | {tickers[i]} floor: {eth_floor}.")
+                    print(f"{dt.utcnow()} | {tickers[i]} floor: {usd_floor}.")
                 else:
                     print(f"{dt.utcnow()} | {tickers[i]} price: ${price:,}.")
                     print(
@@ -145,6 +165,8 @@ async def on_ready():
                             await guild.me.edit(
                                 nick=f"{tickers[i]} Ξ{round(floor_price,2):,}"
                             )
+                        elif attributes[i][1] == "larvalabs":
+                            await guild.me.edit(nick=f"{tickers[i]} {eth_floor}")
                         else:
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ${round(price,2):,}"
@@ -161,6 +183,13 @@ async def on_ready():
                             await clients[i].change_presence(
                                 activity=Activity(
                                     name=f"7d avg.: Ξ{round(pctchng,2)}",
+                                    type=ActivityType.watching,
+                                )
+                            )
+                        elif attributes[i][1] == "larvalabs":
+                            await client.change_presence(
+                                activity=Activity(
+                                    name=f"in USD: {usd_floor}",
                                     type=ActivityType.watching,
                                 )
                             )
