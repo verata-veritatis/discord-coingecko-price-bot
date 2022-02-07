@@ -218,6 +218,10 @@ async def on_ready():
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
                         elif attributes[i][1] == "dopexapi":
                             await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
+                        elif price < 1:
+                            await guild.me.edit(
+                                nick=f"{tickers[i]} ${round(price,4):,}"
+                            )
                         else:
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ${round(price,2):,}"
