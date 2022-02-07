@@ -16,9 +16,11 @@ import asyncio
 import requests
 import tokens  # gitignore dictionary, holds CG API names & Discord API tokens
 import time
+import ssl
+import json
+
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
-
 from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
 
@@ -44,6 +46,7 @@ print("\n---------- V5 flim.eth's Discord Multibot ----------\n")
 ################################################################################
 print(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
 tickers = []
+status_code = 0
 
 for i in range(len(bot_tokens)):
     if attributes[i][1] == "opensea":
@@ -53,28 +56,30 @@ for i in range(len(bot_tokens)):
         token_name = r.json()["collection"]["primary_asset_contracts"][0][
             "symbol"
         ].upper()
+        status_code = r.status_code
     elif attributes[i][1] == "larvalabs":
         r = requests.get(f"https://www.larvalabs.com/cryptopunks")
         token_name = attributes[i][0].upper()
+        status_code = r.status_code
     elif attributes[i][1] == "dopexnft":
         hdr = {"User-Agent": "Mozilla/5.0"}
         site = f"https://tofunft.com/collection/dopex-{attributes[i][0]}/items"
+        context = ssl._create_unverified_context()
         r = Request(site, headers=hdr)
+        page = urlopen(r, context=context)
         token_name = attributes[i][0].upper()
+        status_code = page.getcode()
     elif attributes[i][1] == "dopexapi":
         r = requests.get(f"https://api.dopex.io/api/v1/tvl?include={attributes[i][0]}")
         temp = attributes[i][0].split("-")
         token_name = temp[0].upper()
+        status_code = r.status_code
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
         token_name = r.json()["symbol"].upper()
+        status_code = r.status_code
     time.sleep(0.3)
-    if attributes[i][1] == "dopexnft":
-        print(
-            f"{dt.utcnow()} | Skipping {token_name}/{attributes[i][3].upper()} check."
-        )
-        tickers.append(token_name)
-    elif r.status_code > 400:
+    if status_code > 400:
         print(r.status_code)
         print(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
         exit()
@@ -104,35 +109,42 @@ async def on_ready():
             try:
                 # pick which operation / API
                 if attributes[i][1] == "opensea":
-                    response = requests.get(
+                    r = requests.get(
                         f"https://api.opensea.io/api/v1/collection/{attributes[i][0]}/stats"
                     )
+                    status_code = r.status_code
                 elif attributes[i][1] == "larvalabs":
-                    response = requests.get(f"https://www.larvalabs.com/cryptopunks")
+                    r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+                    status_code = r.status_code
                 elif attributes[i][1] == "dopexnft":
-                    response = Request(site, headers=hdr)
+                    site = (
+                        f"https://tofunft.com/collection/dopex-{attributes[i][0]}/items"
+                    )
+                    r = Request(site, headers=hdr)
+                    page = urlopen(r, context=context)
+                    status_code = page.getcode()
                 elif attributes[i][1] == "dopexapi":
-                    response = requests.get(
+                    r = requests.get(
                         f"https://api.dopex.io/api/v1/tvl?include={attributes[i][0]}"
                     )
+                    status_code = r.status_code
                 else:
-                    response = requests.get(
+                    r = requests.get(
                         f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}"
                     )
+                    status_code = r.status_code
                 # handle for different use cases
                 if attributes[i][2] == "market_cap":
-                    price = response.json()["market_data"][attributes[i][2]][
-                        attributes[i][3]
-                    ]
-                    pctchng = response.json()["market_data"]["fully_diluted_valuation"][
+                    price = r.json()["market_data"][attributes[i][2]][attributes[i][3]]
+                    pctchng = r.json()["market_data"]["fully_diluted_valuation"][
                         attributes[i][3]
                     ]
                 elif attributes[i][1] == "opensea":
-                    floor_price = response.json()["stats"][attributes[i][2]]
-                    pctchng = response.json()["stats"]["seven_day_average_price"]
+                    floor_price = r.json()["stats"][attributes[i][2]]
+                    pctchng = r.json()["stats"]["seven_day_average_price"]
                 elif attributes[i][1] == "larvalabs":
                     soup = BeautifulSoup(
-                        response.content, "html5lib"
+                        r.content, "html5lib"
                     )  # If this line causes an error, run 'pip install html5lib' or install html5lib
                     punk_stats = soup.findAll(
                         "div", attrs={"class": "col-md-4 punk-stat"}
@@ -142,7 +154,6 @@ async def on_ready():
                     eth_floor = "Ξ" + split[0]
                     usd_floor = split[1].lstrip("(").rstrip(" USD)")
                 elif attributes[i][1] == "dopexnft":
-                    page = urlopen(response)
                     soup = BeautifulSoup(page, "html5lib")
                     script = soup.find(id="__NEXT_DATA__").string
                     json_data = json.loads(script)
@@ -154,18 +165,16 @@ async def on_ready():
                     ]
                     floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
                 elif attributes[i][1] == "dopexapi":
-                    tvl = round(float(response.json()[attributes[i][2]]) / 1000000, 2)
+                    tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
                     epoch = 4
                     epoch_month = "Feb 2022"
                 else:
-                    price = response.json()["market_data"][attributes[i][2]][
-                        attributes[i][3]
-                    ]
-                    pctchng = response.json()["market_data"][
+                    price = r.json()["market_data"][attributes[i][2]][attributes[i][3]]
+                    pctchng = r.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ][attributes[i][3]]
                 # print status code
-                print(f"{dt.utcnow()} | response status code: {response.status_code}.")
+                print(f"{dt.utcnow()} | response status code: {status_code}.")
                 # console printing logic
                 if attributes[i][2] == "market_cap":
                     print(f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.")
@@ -186,12 +195,12 @@ async def on_ready():
                     print(f"{dt.utcnow()} | {tickers[i]} floor: {eth_floor}.")
                     print(f"{dt.utcnow()} | {tickers[i]} floor: {usd_floor}.\n")
                 elif attributes[i][1] == "dopexnft":
-                    print(f"{dt.utcnow()} | bridgoor floor: {floor}.")
-                    print(f"{dt.utcnow()} | volume: {vol}.\n")
+                    print(f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.")
+                    print(f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n")
                 elif attributes[i][1] == "dopexapi":
-                    print(f"{dt.utcnow()} | {attributes[i][0]} tvl: ${tvl:,}M.")
+                    print(f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}M.")
                     print(
-                        f"{dt.utcnow()} | {attributes[i][0]} epoch: {epoch} | {epoch_month}.\n"
+                        f"{dt.utcnow()} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
                     )
                 else:
                     print(f"{dt.utcnow()} | {tickers[i]} price: ${price:,}.")
@@ -214,7 +223,6 @@ async def on_ready():
                         elif attributes[i][1] == "larvalabs":
                             await guild.me.edit(nick=f"{tickers[i]} {eth_floor}")
                         elif attributes[i][1] == "dopexnft":
-                            # await guild.me.edit(nick=f"{token_name.title()}: Ξ{floor}")
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
                         elif attributes[i][1] == "dopexapi":
                             await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
