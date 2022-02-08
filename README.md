@@ -3,38 +3,39 @@ I have refactored by bots into a single "multibot" which takes as input a dictio
 Discord Tokens (keys) and bot attributes (market_it, api, data point, currency). This data sits in a .gitignored file called `tokens.py` which lives in the same folder as my multibot script. You will see a file called `example_tokens.py` which you can add discord tokens and rename to `tokens.py` 
 
 This is the structure of that file:
+```
+tokens_dict = {
+    # coingecko
+    "apikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "dopex",
+        "coingecko",
+        "current_price",
+        "usd",
+    ],
+	# opensea
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "boredapeyachtclub",
+        "opensea",
+        "floor_price",
+        "eth",
+    ],}
+```
 
-`tokens_dict = {`
-    `# coingecko`
-    `"apikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [`
-        `"dopex",`
-        `"coingecko",`
-        `"current_price",`
-        `"usd",`
-    `],`
-	`# opensea`
-    `"anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [`
-        `"boredapeyachtclub",`
-        `"opensea",`
-        `"floor_price",`
-        `"eth",`
-    `],}`
-
-
-For python3.6+. Referenced libaries you'll need: 
-`asyncio.py`
-`requests.py`
-`tokens.py` (this is the file mentioned above)
-`time.py`
-`ssl.py`
-`json.py`
-`BeatifulSoup.py`
-`Request.py`
-`urlopen.py`
-`discord.py`
-`datetime.py`
-`requests.py`
-
+For python3.6+. Referenced libaries you'll need:
+``` 
+asyncio.py
+requests.py
+tokens.py (this is the file mentioned above)
+time.py
+ssl.py
+json.py
+BeatifulSoup.py
+Request.py
+urlopen.py
+discord.py
+datetime.py
+requests.py
+```
 The multibot needs nickname-changing permissions.
 
 For example to utilize Coingecko, open the `tokens.py` file and add your `discord_token` along with your `market_id` (dopex), your `api` (coingecko), `data_point` (current_price), and `currency` (usd). Please note, my script currently only handles `usd` or `btc` as currency inputs, as well as `current_price` or `market_cap` as data point inputs. 
