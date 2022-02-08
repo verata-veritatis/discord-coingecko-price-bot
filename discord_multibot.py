@@ -14,7 +14,7 @@
 ################################################################################
 import asyncio
 import requests
-import tokens  # gitignore dictionary, holds CG API names & Discord API tokens
+import tokens  # gitignore dictionary, holds Discord API tokens & attributes
 import time
 import ssl
 import json
@@ -42,7 +42,7 @@ attributes = list(tokens.tokens_dict.values())
 print("\n---------- V5 flim.eth's Discord Multibot ----------\n")
 
 ################################################################################
-# Sanity check for APIs.
+# API & response code sanity check; also create list of tickers
 ################################################################################
 print(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
 tickers = []
@@ -166,6 +166,7 @@ async def on_ready():
                     floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
                 elif attributes[i][1] == "dopexapi":
                     tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
+                    # per witherblock these values should be added to Dopex API, but not yet
                     epoch = 4
                     epoch_month = "Feb 2022"
                 else:
@@ -209,7 +210,7 @@ async def on_ready():
                     )
                 for guild in clients[i].guilds:
                     try:
-                        # handle different logic
+                        # handle different logic for bot nicknaming & data display
                         if attributes[i][3] == "btc":
                             await guild.me.edit(
                                 nick=f"{tickers[i]}/{attributes[i][3].upper()} ₿{round(float(price), 4)}"

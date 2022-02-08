@@ -1,22 +1,63 @@
-# coingecko-price-bot
-Uses the CoinGecko API to actively display the price of a cryptocurrency via the nickname.
+# discord_multibot
+I have refactored by bots into a single "multibot" which takes as input a dictionary of 
+Discord Tokens (keys) and bot attributes (market_it, api, data point, currency). This data sits in a .gitignored file called `tokens.py` which lives in the same folder as my multibot script. You will see a file called `example_tokens.py` which you can add discord tokens and rename to `tokens.py` 
 
-For python3.6+. You'll need `discord.py` and `requests`. The bot needs nickname-changing permissions.
+This is the structure of that file:
 
-Open the `bot.py` file and add your desired `MARKET_ID` and `BOT_TOKEN`. The bot token can be obtained from the Discord developer portal after making a new app. The market ID is obtained by going to the token's page on CoinGecko, and grabbing the last bit of the URL i.e. https://www.coingecko.com/en/coins/dopex -> `MARKET_ID = dopex`.
+`tokens_dict = {
+    # coingecko
+    "apikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "dopex",
+        "coingecko",
+        "current_price",
+        "usd",
+    ],
+	# opensea
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "boredapeyachtclub",
+        "opensea",
+        "floor_price",
+        "eth",
+    ],}`
 
-# bayc-opensea-floor-price-bot
 
-No `MARKET_ID` necessary for this bot. Discord bot token still required. I didn't figure out how to query collections and get to BAYC but was able to do it using an address which I know owns a BAYC. There's probably a smarter way to do it without specifying 'asset_owner' but I'm n00b shadowy super coder. I'm learning. 
+For python3.6+. Referenced libaries you'll need: 
+`asyncio.py` 
+`requests.py`
+`tokens.py` (this is the file mentioned above) 
+`time.py`
+`ssl.py`
+`json.py`
+`BeatifulSoup.py`
+`Request.py`
+`urlopen.py`
+`discord.py`
+`datetime.py`
+`requests.py`
 
-BAYC bot shows the floor price, and for "watching" displays the 7-day average price. All other requirements for this bot match the Coingecko Price bot. 
+The multibot needs nickname-changing permissions.
 
-# crypto-punks-floor-price-bot
+For example to utilize Coingecko, open the `tokens.py` file and add your `discord_token` along with your `market_id` (dopex), your `api` (coingecko), `data_point` (current_price), and `currency` (usd). Please note, my script currently only handles `usd` or `btc` as currency inputs, as well as `current_price` or `market_cap` as data point inputs. 
 
-Dependencies: `requests` & `BeautifulSoup`. This bot uses BeautifulSoup to pull the CryptoPunks floor price from larvalabs.com/cryptopunks in ETH and USD. 
+The bot token can be obtained from the Discord developer portal after making a new app. 
 
-# etherscan-gas-bot
+The market ID is obtained by going to the token's page on CoinGecko, locating `API id`. Please note the API id is sometimes the same as the URL i.e. https://www.coingecko.com/en/coins/dopex -> `MARKET_ID = dopex`. But not always, as is the case with BTRFLY: https://www.coingecko.com/en/coins/redacted-cartel -- API id = butterflydao
 
-Dependencies: `requests` & `math`. This bot pulls etherscan gas data and displays the fast gwei price, confirmation time in seconds, as well as base fee & priority fee.
+How it works: The multibot will do a quick API call for each token in the tokens.py dictionary. If the market isn't found, or a 403 error is returned, the multibot will notify via console and exit. If all sanity checks pass, the multibot will then start up all the bots in discord, and then update price procedurally stepping through each discort bot, one every 3 seconds. The multibot will also print its fetched data points to the console.
+
+################################################################################
+originally forked from
+https://github.com/verata-veritatis/discord-coingecko-price-bot
+
+rebuilt & refactored with <3 by:
+flim.eth
+
+questions? reach out
+twitter.com/0xflim
+0xflim@pm.me
+
+if this is helpful to you, please consider donating:
+0x8d6fc57487ade3738c2baf3437b63d35420db74d (or flim.eth)
+################################################################################
 
 god bless
