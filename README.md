@@ -4,27 +4,27 @@ Discord Tokens (keys) and bot attributes (market_it, api, data point, currency).
 
 This is the structure of that file:
 
-`tokens_dict = {
-    # coingecko
-    "apikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
-        "dopex",
-        "coingecko",
-        "current_price",
-        "usd",
-    ],
-	# opensea
-    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
-        "boredapeyachtclub",
-        "opensea",
-        "floor_price",
-        "eth",
-    ],}`
+`tokens_dict = {`
+    `# coingecko`
+    `"apikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [`
+        `"dopex",`
+        `"coingecko",`
+        `"current_price",`
+        `"usd",`
+    `],`
+	`# opensea`
+    `"anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [`
+        `"boredapeyachtclub",`
+        `"opensea",`
+        `"floor_price",`
+        `"eth",`
+    `],}`
 
 
 For python3.6+. Referenced libaries you'll need: 
-`asyncio.py` 
+`asyncio.py`
 `requests.py`
-`tokens.py` (this is the file mentioned above) 
+`tokens.py` (this is the file mentioned above)
 `time.py`
 `ssl.py`
 `json.py`
@@ -53,7 +53,7 @@ rebuilt & refactored with <3 by:
 flim.eth
 
 questions? reach out
-twitter.com/0xflim
+https://twitter.com/0xflim
 0xflim@pm.me
 
 if this is helpful to you, please consider donating:
