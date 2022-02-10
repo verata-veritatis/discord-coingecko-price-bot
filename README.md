@@ -35,6 +35,7 @@ urlopen.py
 discord.py
 datetime.py
 requests.py
+math.py
 ```
 The multibot needs nickname-changing permissions.
 
