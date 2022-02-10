@@ -33,4 +33,39 @@
         "floor_price",
         "eth",
     ],
+    # punks
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "punk",
+        "larvalabs",
+        "floor_price",
+        "eth",
+    ],
+    # dopexapi
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "dpx-ssov",
+        "dopexapi",
+        "tvl",
+        "usd",
+    ],
+    # dopexnft
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "bridgoor",
+        "dopexnft",
+        "floor_price",
+        "eth",
+    ],
+    # etherscan gas
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "gas",
+        "etherscan",
+        "C67HPZF2EPRQ36IKWRDPMZEW5R1ZFYWQUW",
+        "gas",
+    ],
+    # validator
+    "anotherapikeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy": [
+        "195271",
+        "beaconchain",
+        "flimnode",
+        "gas",
+    ],
 }`

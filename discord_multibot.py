@@ -18,6 +18,7 @@ import tokens  # gitignore dictionary, holds Discord API tokens & attributes
 import time
 import ssl
 import json
+import math
 
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -74,6 +75,19 @@ for i in range(len(bot_tokens)):
         temp = attributes[i][0].split("-")
         token_name = temp[0].upper()
         status_code = r.status_code
+    elif attributes[i][1] == "beaconchain":
+        r = requests.get(f"https://beaconcha.in/validator/{attributes[i][0]}")
+        token_name = attributes[i][2].upper()
+        status_code = r.status_code
+    elif attributes[i][0] == "gas":
+        r = requests.get(
+            "https://api.etherscan.io/api"
+            "?module=gastracke"
+            "r&action=gasorac"
+            f"le&apikey={attributes[i][2]}"
+        )
+        token_name = attributes[i][0].upper()
+        status_code = r.status_code
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
         token_name = r.json()["symbol"].upper()
@@ -116,6 +130,11 @@ async def on_ready():
                 elif attributes[i][1] == "larvalabs":
                     r = requests.get(f"https://www.larvalabs.com/cryptopunks")
                     status_code = r.status_code
+                elif attributes[i][1] == "beaconchain":
+                    r = requests.get(
+                        f"https://beaconcha.in/validator/{attributes[i][0]}"
+                    )
+                    status_code = r.status_code
                 elif attributes[i][1] == "dopexnft":
                     site = (
                         f"https://tofunft.com/collection/dopex-{attributes[i][0]}/items"
@@ -128,6 +147,24 @@ async def on_ready():
                         f"https://api.dopex.io/api/v1/tvl?include={attributes[i][0]}"
                     )
                     status_code = r.status_code
+                elif attributes[i][1] == "etherscan":
+                    r = requests.get(
+                        "https://api.etherscan.io/api"
+                        "?module=gastracke"
+                        "r&action=gasorac"
+                        f"le&apikey={attributes[i][2]}"
+                    )
+                    fastGas = int(r.json()["result"]["FastGasPrice"])
+                    rawSuggestedBase = r.json()["result"]["suggestBaseFee"]
+                    suggestedBase = math.floor(
+                        float(r.json()["result"]["suggestBaseFee"])
+                    )
+
+                    # convert gwei to wei
+                    fastGasWei = fastGas * 1e9
+
+                    # get priority fees
+                    fastPriority = fastGas % suggestedBase
                 else:
                     r = requests.get(
                         f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}"
@@ -153,6 +190,25 @@ async def on_ready():
                     split = floor.string.split(" ETH ")
                     eth_floor = "Ξ" + split[0]
                     usd_floor = split[1].lstrip("(").rstrip(" USD)")
+                elif attributes[i][1] == "beaconchain":
+                    soup = BeautifulSoup(
+                        r.content, "html5lib"
+                    )  # If this line causes an error, run 'pip install html5lib' or install html5lib
+
+                    blocks = soup.find("span", attrs={"id": "blockCount"})
+                    block_stats = blocks.attrs["title"].split("Blocks (")[1]
+                    b_prop = block_stats.split(", ")[0].split(": ")
+                    b_miss = block_stats.split(", ")[1].split(": ")
+                    b_orph = block_stats.split(", ")[2].split(": ")
+                    b_sche = block_stats.split(", ")[3].split(": ")
+
+                    attestations = soup.find("span", attrs={"id": "attestationCount"})
+                    attestation_stats = attestations.attrs["title"].split(
+                        "Attestation Assignments ("
+                    )[1]
+                    a_exec = attestation_stats.split(", ")[0].split(": ")
+                    a_miss = attestation_stats.split(", ")[1].split(": ")
+                    a_orph = attestation_stats.split(", ")[2].split(": ")
                 elif attributes[i][1] == "dopexnft":
                     soup = BeautifulSoup(page, "html5lib")
                     script = soup.find(id="__NEXT_DATA__").string
@@ -169,6 +225,17 @@ async def on_ready():
                     # per witherblock these values should be added to Dopex API, but not yet
                     epoch = 4
                     epoch_month = "Feb 2022"
+                elif attributes[i][1] == "etherscan":
+                    r2 = requests.get(
+                        "https://api.etherscan.io/api"
+                        "?module=gastracker"
+                        "&action=gasestimate"
+                        f"&gasprice={str(round(fastGasWei))}"
+                        f"&apikey={attributes[i][2]}"
+                    )
+
+                    fastGasTime = r2.json()["result"]
+                    status_code = r2.status_code
                 else:
                     price = r.json()["market_data"][attributes[i][2]][attributes[i][3]]
                     pctchng = r.json()["market_data"][
@@ -195,6 +262,9 @@ async def on_ready():
                 elif attributes[i][1] == "larvalabs":
                     print(f"{dt.utcnow()} | {tickers[i]} floor: {eth_floor}.")
                     print(f"{dt.utcnow()} | {tickers[i]} floor: {usd_floor}.\n")
+                elif attributes[i][1] == "beaconchain":
+                    print(f"{dt.utcnow()} | blocks: {block_stats}.")
+                    print(f"{dt.utcnow()} | attestations: {attestation_stats}.\n")
                 elif attributes[i][1] == "dopexnft":
                     print(f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.")
                     print(f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n")
@@ -202,6 +272,15 @@ async def on_ready():
                     print(f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}M.")
                     print(
                         f"{dt.utcnow()} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
+                    )
+                elif attributes[i][1] == "etherscan":
+                    print(f"{dt.utcnow()} | status code: {r.status_code}.")
+                    print(f"{dt.utcnow()} | suggested base fee: {suggestedBase}.")
+                    print(f"{dt.utcnow()} | fast gas: {fastGas}.")
+                    print(f"{dt.utcnow()} | fast gas wei : {fastGasWei}.")
+                    print(f"{dt.utcnow()} | fast priority: {fastPriority}.")
+                    print(
+                        f"{dt.utcnow()} | fast gas confirmation in seconds: {fastGasTime}.\n"
                     )
                 else:
                     print(f"{dt.utcnow()} | {tickers[i]} price: ${price:,}.")
@@ -223,10 +302,18 @@ async def on_ready():
                             )
                         elif attributes[i][1] == "larvalabs":
                             await guild.me.edit(nick=f"{tickers[i]} {eth_floor}")
+                        elif attributes[i][1] == "beaconchain":
+                            await guild.me.edit(
+                                nick=f"{tickers[i].lower()} blocks: {b_prop[1]}"
+                            )
                         elif attributes[i][1] == "dopexnft":
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
                         elif attributes[i][1] == "dopexapi":
                             await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
+                        elif attributes[i][1] == "etherscan":
+                            await guild.me.edit(
+                                nick=f"{fastGas:,} gwei ~{fastGasTime} sec"
+                            )
                         elif price < 1:
                             await guild.me.edit(
                                 nick=f"{tickers[i]} ${round(price,4):,}"
@@ -257,6 +344,13 @@ async def on_ready():
                                     type=ActivityType.watching,
                                 )
                             )
+                        elif attributes[i][1] == "beaconchain":
+                            await clients[i].change_presence(
+                                activity=Activity(
+                                    name=f"attestations: {a_exec[1]}",
+                                    type=ActivityType.watching,
+                                )
+                            )
                         elif attributes[i][1] == "dopexnft":
                             await clients[i].change_presence(
                                 activity=Activity(
@@ -268,6 +362,13 @@ async def on_ready():
                             await clients[i].change_presence(
                                 activity=Activity(
                                     name=f"Epoch: {epoch} | {epoch_month}",
+                                    type=ActivityType.watching,
+                                )
+                            )
+                        elif attributes[i][1] == "etherscan":
+                            await clients[i].change_presence(
+                                activity=Activity(
+                                    name=f"Base: {suggestedBase} Priority: {fastPriority}",
                                     type=ActivityType.watching,
                                 )
                             )
