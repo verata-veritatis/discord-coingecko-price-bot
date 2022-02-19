@@ -62,13 +62,13 @@ for i in range(len(bot_tokens)):
         r = requests.get(f"https://www.larvalabs.com/cryptopunks")
         token_name = attributes[i][0].upper()
         status_code = r.status_code
-    elif attributes[i][1] == "dopexnft":
+    elif attributes[i][1] == "tofunft":
         hdr = {"User-Agent": "Mozilla/5.0"}
-        site = f"https://tofunft.com/collection/dopex-{attributes[i][0]}/items"
+        site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
         context = ssl._create_unverified_context()
         r = Request(site, headers=hdr)
         page = urlopen(r, context=context)
-        token_name = attributes[i][0].upper()
+        token_name = attributes[i][2].title()
         status_code = page.getcode()
     elif attributes[i][1] == "dopexapi":
         r = requests.get(f"https://api.dopex.io/api/v1/tvl?include={attributes[i][0]}")
@@ -135,10 +135,8 @@ async def on_ready():
                         f"https://beaconcha.in/validator/{attributes[i][0]}"
                     )
                     status_code = r.status_code
-                elif attributes[i][1] == "dopexnft":
-                    site = (
-                        f"https://tofunft.com/collection/dopex-{attributes[i][0]}/items"
-                    )
+                elif attributes[i][1] == "tofunft":
+                    site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
                     r = Request(site, headers=hdr)
                     page = urlopen(r, context=context)
                     status_code = page.getcode()
@@ -209,7 +207,7 @@ async def on_ready():
                     a_exec = attestation_stats.split(", ")[0].split(": ")
                     a_miss = attestation_stats.split(", ")[1].split(": ")
                     a_orph = attestation_stats.split(", ")[2].split(": ")
-                elif attributes[i][1] == "dopexnft":
+                elif attributes[i][1] == "tofunft":
                     soup = BeautifulSoup(page, "html5lib")
                     script = soup.find(id="__NEXT_DATA__").string
                     json_data = json.loads(script)
@@ -265,7 +263,7 @@ async def on_ready():
                 elif attributes[i][1] == "beaconchain":
                     print(f"{dt.utcnow()} | blocks: {block_stats}.")
                     print(f"{dt.utcnow()} | attestations: {attestation_stats}.\n")
-                elif attributes[i][1] == "dopexnft":
+                elif attributes[i][1] == "tofunft":
                     print(f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.")
                     print(f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n")
                 elif attributes[i][1] == "dopexapi":
@@ -306,7 +304,7 @@ async def on_ready():
                             await guild.me.edit(
                                 nick=f"{tickers[i].lower()} blocks: {b_prop[1]}"
                             )
-                        elif attributes[i][1] == "dopexnft":
+                        elif attributes[i][1] == "tofunft":
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
                         elif attributes[i][1] == "dopexapi":
                             await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
@@ -351,7 +349,7 @@ async def on_ready():
                                     type=ActivityType.watching,
                                 )
                             )
-                        elif attributes[i][1] == "dopexnft":
+                        elif attributes[i][1] == "tofunft":
                             await clients[i].change_presence(
                                 activity=Activity(
                                     name=f"Volume: Ξ{vol}",
