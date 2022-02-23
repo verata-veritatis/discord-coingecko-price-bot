@@ -70,6 +70,14 @@ for i in range(len(bot_tokens)):
         page = urlopen(r, context=context)
         token_name = attributes[i][2].title()
         status_code = page.getcode()
+    elif attributes[i][1] == "mithical":
+        hdr = {"User-Agent": "Mozilla/5.0"}
+        site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
+        context = ssl._create_unverified_context()
+        r = Request(site, headers=hdr)
+        page = urlopen(r, context=context)
+        token_name = attributes[i][2].title()
+        status_code = page.getcode()
     elif attributes[i][1] == "dopexapi":
         r = requests.get(f"https://api.dopex.io/api/v1/tvl?include={attributes[i][0]}")
         temp = attributes[i][0].split("-")
@@ -136,6 +144,11 @@ async def on_ready():
                     )
                     status_code = r.status_code
                 elif attributes[i][1] == "tofunft":
+                    site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
+                    r = Request(site, headers=hdr)
+                    page = urlopen(r, context=context)
+                    status_code = page.getcode()
+                elif attributes[i][1] == "mithical":
                     site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
                     r = Request(site, headers=hdr)
                     page = urlopen(r, context=context)
@@ -218,6 +231,17 @@ async def on_ready():
                         "market_vol"
                     ]
                     floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
+                elif attributes[i][1] == "mithical":
+                    soup = BeautifulSoup(page, "html5lib")
+                    script = soup.find(id="__NEXT_DATA__").string
+                    json_data = json.loads(script)
+                    floor_dict = json_data["props"]["pageProps"]["data"]["contract"][
+                        "stats"
+                    ]["market_floor_price"]
+                    vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
+                        "market_vol"
+                    ]
+                    floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
                 elif attributes[i][1] == "dopexapi":
                     tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
                     # per witherblock these values should be added to Dopex API, but not yet
@@ -266,6 +290,11 @@ async def on_ready():
                 elif attributes[i][1] == "tofunft":
                     print(f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.")
                     print(f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n")
+                elif attributes[i][1] == "mithical":
+                    if attributes[i][2] == "floor":
+                        print(f"{dt.utcnow()} | {tickers[i]}: Ξ{floor}.\n")
+                    elif attributes[i][2] == "vol":
+                        print(f"{dt.utcnow()} | {tickers[i]}: Ξ{vol}.\n")
                 elif attributes[i][1] == "dopexapi":
                     print(f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}M.")
                     print(
@@ -306,6 +335,11 @@ async def on_ready():
                             )
                         elif attributes[i][1] == "tofunft":
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
+                        elif attributes[i][1] == "mithical":
+                            if attributes[i][2] == "floor":
+                                await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
+                            elif attributes[i][2] == "vol":
+                                await guild.me.edit(nick=f"{tickers[i]}: Ξ{vol}")
                         elif attributes[i][1] == "dopexapi":
                             await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
                         elif attributes[i][1] == "etherscan":
@@ -356,6 +390,8 @@ async def on_ready():
                                     type=ActivityType.watching,
                                 )
                             )
+                        elif attributes[i][1] == "mithical":
+                            continue
                         elif attributes[i][1] == "dopexapi":
                             await clients[i].change_presence(
                                 activity=Activity(
