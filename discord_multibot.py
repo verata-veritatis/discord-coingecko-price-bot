@@ -62,15 +62,7 @@ for i in range(len(bot_tokens)):
         r = requests.get(f"https://www.larvalabs.com/cryptopunks")
         token_name = attributes[i][0].upper()
         status_code = r.status_code
-    elif attributes[i][1] == "tofunft":
-        hdr = {"User-Agent": "Mozilla/5.0"}
-        site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
-        context = ssl._create_unverified_context()
-        r = Request(site, headers=hdr)
-        page = urlopen(r, context=context)
-        token_name = attributes[i][2].title()
-        status_code = page.getcode()
-    elif attributes[i][1] == "mithical":
+    elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
         hdr = {"User-Agent": "Mozilla/5.0"}
         site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
         context = ssl._create_unverified_context()
@@ -143,12 +135,7 @@ async def on_ready():
                         f"https://beaconcha.in/validator/{attributes[i][0]}"
                     )
                     status_code = r.status_code
-                elif attributes[i][1] == "tofunft":
-                    site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
-                    r = Request(site, headers=hdr)
-                    page = urlopen(r, context=context)
-                    status_code = page.getcode()
-                elif attributes[i][1] == "mithical":
+                elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
                     site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
                     r = Request(site, headers=hdr)
                     page = urlopen(r, context=context)
@@ -220,18 +207,7 @@ async def on_ready():
                     a_exec = attestation_stats.split(", ")[0].split(": ")
                     a_miss = attestation_stats.split(", ")[1].split(": ")
                     a_orph = attestation_stats.split(", ")[2].split(": ")
-                elif attributes[i][1] == "tofunft":
-                    soup = BeautifulSoup(page, "html5lib")
-                    script = soup.find(id="__NEXT_DATA__").string
-                    json_data = json.loads(script)
-                    floor_dict = json_data["props"]["pageProps"]["data"]["contract"][
-                        "stats"
-                    ]["market_floor_price"]
-                    vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
-                        "market_vol"
-                    ]
-                    floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
-                elif attributes[i][1] == "mithical":
+                elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
                     soup = BeautifulSoup(page, "html5lib")
                     script = soup.find(id="__NEXT_DATA__").string
                     json_data = json.loads(script)
