@@ -239,8 +239,11 @@ async def on_ready():
                     pctchng = r.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ][attributes[i][3]]
-                # print status code
+
+                # print status code & bot number
+                print(f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}.")
                 print(f"{dt.utcnow()} | response status code: {status_code}.")
+
                 # console printing logic
                 if attributes[i][2] == "market_cap":
                     print(f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.")
