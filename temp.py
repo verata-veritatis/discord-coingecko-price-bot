@@ -34,27 +34,36 @@ token_name = "bridgoor"
 # print(f"{dt.utcnow()} | {contract} tvl: ${tvl:,}M.")
 
 
+### Defillama TVL
+
+r = requests.get(f"https://api.llama.fi/tvl/jones-dao")
+token_name = f"Vaults TVL"
+status_code = r.status_code
+tvl = r.json()
+
+print(tvl)
+
 ### TofuNFT using urllib request
-site = f"https://tofunft.com/collection/dopex-{token_name}/items"
-hdr = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"
-}
-context = ssl._create_unverified_context()
-req = Request(site, headers=hdr)
-page = urlopen(req, context=context)
-print(page.getcode())
-soup = BeautifulSoup(page, "html5lib")
-script = soup.find(id="__NEXT_DATA__").string
-json_data = json.loads(script)
-floor_dict = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
-    "market_floor_price"
-]
+# site = f"https://tofunft.com/collection/dopex-{token_name}/items"
+# hdr = {
+#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0"
+# }
+# context = ssl._create_unverified_context()
+# req = Request(site, headers=hdr)
+# page = urlopen(req, context=context)
+# print(page.getcode())
+# soup = BeautifulSoup(page, "html5lib")
+# script = soup.find(id="__NEXT_DATA__").string
+# json_data = json.loads(script)
+# floor_dict = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
+#     "market_floor_price"
+# ]
 
-vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"]["market_vol"]
-floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
+# vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"]["market_vol"]
+# floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
 
-print(f"{dt.utcnow()} | {token_name} floor: {floor}.")
-print(f"{dt.utcnow()} | {token_name} volume: {vol}.")
+# print(f"{dt.utcnow()} | {token_name} floor: {floor}.")
+# print(f"{dt.utcnow()} | {token_name} volume: {vol}.")
 
 ### TofuNFT using requests
 

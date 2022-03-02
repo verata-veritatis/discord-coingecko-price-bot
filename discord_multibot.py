@@ -88,6 +88,9 @@ for i in range(len(bot_tokens)):
         )
         token_name = attributes[i][0].upper()
         status_code = r.status_code
+    elif attributes[i][1] == "defillama":
+        r = requests.get(f"https://api.llama.fi/{attributes[i][2]}/{attributes[i][0]}")
+        token_name = attributes[i][2].upper()
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
         token_name = r.json()["symbol"].upper()
@@ -125,6 +128,11 @@ async def on_ready():
                 if attributes[i][1] == "opensea":
                     r = requests.get(
                         f"https://api.opensea.io/api/v1/collection/{attributes[i][0]}/stats"
+                    )
+                    status_code = r.status_code
+                elif attributes[i][1] == "defillama":
+                    r = requests.get(
+                        f"https://api.llama.fi/{attributes[i][2]}/{attributes[i][0]}"
                     )
                     status_code = r.status_code
                 elif attributes[i][1] == "larvalabs":
@@ -174,6 +182,8 @@ async def on_ready():
                     pctchng = r.json()["market_data"]["fully_diluted_valuation"][
                         attributes[i][3]
                     ]
+                elif attributes[i][1] == "defillama":
+                    tvl = r.json()
                 elif attributes[i][1] == "opensea":
                     floor_price = r.json()["stats"][attributes[i][2]]
                     pctchng = r.json()["stats"]["seven_day_average_price"]
@@ -248,6 +258,8 @@ async def on_ready():
                 if attributes[i][2] == "market_cap":
                     print(f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.")
                     print(f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n")
+                elif attributes[i][1] == "defillama":
+                    print(f"{dt.utcnow()} | {tickers[i]}: ${round(tvl,2):,}.")
                 elif attributes[i][1] == "opensea":
                     print(f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}.")
                     print(
@@ -300,6 +312,8 @@ async def on_ready():
                             await guild.me.edit(
                                 nick=f"{tickers[i]}/{attributes[i][3].upper()} ₿{round(float(price), 4)}"
                             )
+                        elif attributes[i][1] == "defillama":
+                            await guild.me.edit(nick=f"{tickers[i]} ${round(tvl,2):,}")
                         elif attributes[i][2] == "market_cap":
                             await guild.me.edit(nick=f"Mcap ${round(price,2):,}")
                         elif attributes[i][1] == "opensea":
@@ -371,6 +385,13 @@ async def on_ready():
                             )
                         elif attributes[i][1] == "mithical":
                             continue
+                        elif attributes[i][1] == "defillama":
+                            await clients[i].change_presence(
+                                activity=Activity(
+                                    name=f"Vaults",
+                                    type=ActivityType.watching,
+                                )
+                            )
                         elif attributes[i][1] == "dopexapi":
                             await clients[i].change_presence(
                                 activity=Activity(
