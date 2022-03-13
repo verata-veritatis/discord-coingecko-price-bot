@@ -45,9 +45,12 @@ The bot token can be obtained from the Discord developer portal after making a n
 
 The market ID is obtained by going to the token's page on CoinGecko, locating `API id`. Please note the API id is sometimes the same as the URL i.e. https://www.coingecko.com/en/coins/dopex -> `MARKET_ID = dopex`. But not always, as is the case with BTRFLY: https://www.coingecko.com/en/coins/redacted-cartel -- API id = butterflydao
 
-How it works: The multibot will do a quick API call for each token in the tokens.py dictionary. If the market isn't found, or a 403 error is returned, the multibot will notify via console and exit. If all sanity checks pass, the multibot will then start up all the bots in discord, and then update price procedurally stepping through each discort bot, one every 3 seconds. The multibot will also print its fetched data points to the console.
+## how it works
 
-################################################################################
+The multibot will do a quick API call for each token in the tokens.py dictionary. If the market isn't found, or a 403 error is returned, the multibot will notify via console and exit. If all sanity checks pass, the multibot will then start up all the bots in discord, and then update price procedurally stepping through each discort bot, one every 3 seconds. The multibot will also print its fetched data points to the console.
+
+## footnotes
+
 originally forked from
 https://github.com/verata-veritatis/discord-coingecko-price-bot
 
@@ -60,6 +63,5 @@ https://twitter.com/0xflim
 
 if this is helpful to you, please consider donating:
 0x8d6fc57487ade3738c2baf3437b63d35420db74d (or flim.eth)
-################################################################################
 
 god bless
