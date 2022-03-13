@@ -259,7 +259,9 @@ async def on_ready():
                     print(f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.")
                     print(f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n")
                 elif attributes[i][1] == "defillama":
-                    print(f"{dt.utcnow()} | {tickers[i]}: ${round(tvl,2):,}.")
+                    print(
+                        f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${round(tvl,2):,}.\n"
+                    )
                 elif attributes[i][1] == "opensea":
                     print(f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}.")
                     print(
