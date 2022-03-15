@@ -231,8 +231,8 @@ async def on_ready():
                 elif attributes[i][1] == "dopexapi":
                     tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
                     # per witherblock these values should be added to Dopex API, but not yet
-                    epoch = 4
-                    epoch_month = "Feb 2022"
+                    epoch = attributes[i][4]
+                    epoch_month = attributes[i][5]
                 elif attributes[i][1] == "etherscan":
                     r2 = requests.get(
                         "https://api.etherscan.io/api"
