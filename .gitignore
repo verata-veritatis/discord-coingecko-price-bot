@@ -1,5 +1,6 @@
 # ignore my tokenz
 tokens.py
+logfile
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
