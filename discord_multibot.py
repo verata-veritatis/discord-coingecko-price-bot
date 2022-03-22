@@ -243,8 +243,8 @@ async def on_ready():
                 elif attributes[i][1] == "dopexapi":
                     tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
                     # per witherblock these values should be added to Dopex API, but not yet
-                    epoch = 4
-                    epoch_month = "Feb 2022"
+                    epoch = attributes[i][4]
+                    epoch_month = attributes[i][5]
                 elif attributes[i][1] == "etherscan":
                     r2 = requests.get(
                         "https://api.etherscan.io/api"
@@ -276,7 +276,7 @@ async def on_ready():
                         f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n"
                         )
                 elif attributes[i][1] == "defillama":
-                    consolePrint = f"{dt.utcnow()} | {tickers[i]}: ${round(tvl,2):,}.\n"
+                    consolePrint = f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${round(tvl,2):,}.\n"
                 elif attributes[i][1] == "opensea":
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}."
