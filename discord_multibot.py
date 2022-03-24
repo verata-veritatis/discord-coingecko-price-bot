@@ -22,9 +22,13 @@ import math
 import logging
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG, filename="logfile", filemode="a+",
-                        format="%(levelname)-8s %(message)s")
-                        # format="%(asctime)-15s %(levelname)-8s %(message)s")
+    logging.basicConfig(
+        level=logging.DEBUG,
+        filename="logfile",
+        filemode="a+",
+        format="%(levelname)-8s %(message)s",
+    )
+    # format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -265,7 +269,9 @@ async def on_ready():
                 # print status code & bot number
                 print(f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}.")
                 print(f"{dt.utcnow()} | response status code: {status_code}.")
-                logging.info(f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}.")
+                logging.info(
+                    f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}."
+                )
                 logging.info(f"{dt.utcnow()} | response status code: {status_code}.")
 
                 # console printing logic
@@ -274,34 +280,34 @@ async def on_ready():
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.\n"
                         f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n"
-                        )
+                    )
                 elif attributes[i][1] == "defillama":
                     consolePrint = f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${round(tvl,2):,}.\n"
                 elif attributes[i][1] == "opensea":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}."
+                        f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}.\n"
                         f"{dt.utcnow()} | {tickers[i]} 7d avg. price: Ξ{round(pctchng,2)}.\n"
-                        )
+                    )
                 elif attributes[i][3] == "btc":
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]}/{attributes[i][3].upper()}: ₿{price:,}.\n"
                         f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
-                        )
+                    )
                 elif attributes[i][1] == "larvalabs":
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} floor: {eth_floor}.\n"
                         f"{dt.utcnow()} | {tickers[i]} floor: {usd_floor}.\n"
-                        )
+                    )
                 elif attributes[i][1] == "beaconchain":
                     consolePrint = (
                         f"{dt.utcnow()} | blocks: {block_stats}.\n"
                         f"{dt.utcnow()} | attestations: {attestation_stats}.\n"
-                        )
+                    )
                 elif attributes[i][1] == "tofunft":
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.\n"
                         f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n"
-                        )
+                    )
                 elif attributes[i][1] == "mithical":
                     if attributes[i][2] == "floor":
                         consolePrint = f"{dt.utcnow()} | {tickers[i]}: Ξ{floor}.\n"
@@ -311,7 +317,7 @@ async def on_ready():
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}M.\n"
                         f"{dt.utcnow()} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
-                        )
+                    )
                 elif attributes[i][1] == "etherscan":
                     consolePrint = (
                         f"{dt.utcnow()} | status code: {r.status_code}.\n"
@@ -320,13 +326,13 @@ async def on_ready():
                         f"{dt.utcnow()} | fast gas wei : {fastGasWei}.\n"
                         f"{dt.utcnow()} | fast priority: {fastPriority}.\n"
                         f"{dt.utcnow()} | fast gas confirmation in seconds: {fastGasTime}.\n"
-                        )
+                    )
                 else:
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} price: ${price:,}.\n"
                         f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
-                        )
-                
+                    )
+
                 print(consolePrint)
                 logging.info(consolePrint)
 
@@ -444,7 +450,9 @@ async def on_ready():
                                 f"{dt.utcnow()} | {guild}:{guild.id} hasn't set "
                                 "nickname permissions for the bot!"
                             )
-                            logging.info(f"{dt.utcnow()} | {guild}:{guild.id} hasn't set nickname permissions for the bot!")
+                            logging.info(
+                                f"{dt.utcnow()} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
+                            )
                         errored_guilds.append(guild)
                     except Exception as e:
                         print(f"{dt.utcnow()} | Unknown error: {e}.")
