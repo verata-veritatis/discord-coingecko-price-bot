@@ -109,19 +109,19 @@ for i in range(len(bot_tokens)):
     time.sleep(0.3)
     if status_code > 400:
         print(r.status_code)
-        logging.info(r.status_code)
+        # logging.info(r.status_code)
         print(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
-        logging.info(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
+        # logging.info(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
         exit()
     else:
         print(f"{dt.utcnow()} | Found {token_name}/{attributes[i][3].upper()}.")
-        logging.info(f"{dt.utcnow()} | Found {token_name}/{attributes[i][3].upper()}.")
+        # logging.info(f"{dt.utcnow()} | Found {token_name}/{attributes[i][3].upper()}.")
         tickers.append(token_name)
 ################################################################################
 # Start clients.
 ################################################################################
 print(f"\n{dt.utcnow()} | Starting Discord bot army of {len(bot_tokens)}.\n")
-logging.info(f"\n{dt.utcnow()} | Starting Discord bot army of {len(bot_tokens)}.\n")
+# logging.info(f"\n{dt.utcnow()} | Starting Discord bot army of {len(bot_tokens)}.\n")
 clients = []
 
 for i in range(len(bot_tokens)):
@@ -136,7 +136,7 @@ client = clients[i]
 async def on_ready():
     errored_guilds = []
     print(f"{dt.utcnow()} | Multibot is running.\n")
-    logging.info(f"{dt.utcnow()} | Multibot is running.\n")
+    # logging.info(f"{dt.utcnow()} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
             try:
@@ -269,10 +269,10 @@ async def on_ready():
                 # print status code & bot number
                 print(f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}.")
                 print(f"{dt.utcnow()} | response status code: {status_code}.")
-                logging.info(
-                    f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}."
-                )
-                logging.info(f"{dt.utcnow()} | response status code: {status_code}.")
+                # logging.info(
+                #     f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}."
+                # )
+                # logging.info(f"{dt.utcnow()} | response status code: {status_code}.")
 
                 # console printing logic
                 consolePrint = ""
@@ -334,7 +334,7 @@ async def on_ready():
                     )
 
                 print(consolePrint)
-                logging.info(consolePrint)
+                # logging.info(consolePrint)
 
                 for guild in clients[i].guilds:
                     try:
@@ -450,25 +450,25 @@ async def on_ready():
                                 f"{dt.utcnow()} | {guild}:{guild.id} hasn't set "
                                 "nickname permissions for the bot!"
                             )
-                            logging.info(
-                                f"{dt.utcnow()} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
-                            )
+                            # logging.info(
+                            #     f"{dt.utcnow()} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
+                            # )
                         errored_guilds.append(guild)
                     except Exception as e:
                         print(f"{dt.utcnow()} | Unknown error: {e}.")
-                        logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
+                        # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
             except ValueError as e:
                 print(f"{dt.utcnow()} | ValueError: {e}.")
-                logging.info(f"{dt.utcnow()} | ValueError: {e}.")
+                # logging.info(f"{dt.utcnow()} | ValueError: {e}.")
             except TypeError as e:
                 print(f"{dt.utcnow()} | TypeError: {e}.")
-                logging.info(f"{dt.utcnow()} | TypeError: {e}.")
+                # logging.info(f"{dt.utcnow()} | TypeError: {e}.")
             except OSError as e:
                 print(f"{dt.utcnow()} | OSError: {e}.")
-                logging.info(f"{dt.utcnow()} | OSError: {e}.")
+                # logging.info(f"{dt.utcnow()} | OSError: {e}.")
             except Exception as e:
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
-                logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
+                # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
             finally:
                 await asyncio.sleep(3)
 
