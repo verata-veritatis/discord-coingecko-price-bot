@@ -19,16 +19,16 @@ import time
 import ssl
 import json
 import math
-import logging
 
-if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        filename="logfile",
-        filemode="a+",
-        format="%(levelname)-8s %(message)s",
-    )
-    # format="%(asctime)-15s %(levelname)-8s %(message)s")
+# import logging
+
+# if __name__ == "__main__":
+#     logging.basicConfig(
+#         level=logging.DEBUG,
+#         filename="logfile",
+#         filemode="a+",
+#         format="%(levelname)-8s %(message)s",
+#     )
 
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -73,7 +73,7 @@ for i in range(len(bot_tokens)):
         r = requests.get(f"https://www.larvalabs.com/cryptopunks")
         token_name = attributes[i][0].upper()
         status_code = r.status_code
-    elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
+    elif attributes[i][1] == "tofunft":
         hdr = {"User-Agent": "Mozilla/5.0"}
         site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
         context = ssl._create_unverified_context()
@@ -159,7 +159,7 @@ async def on_ready():
                         f"https://beaconcha.in/validator/{attributes[i][0]}"
                     )
                     status_code = r.status_code
-                elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
+                elif attributes[i][1] == "tofunft":
                     site = f"https://tofunft.com/collection/{attributes[i][0]}/items"
                     r = Request(site, headers=hdr)
                     page = urlopen(r, context=context)
@@ -233,7 +233,7 @@ async def on_ready():
                     a_exec = attestation_stats.split(", ")[0].split(": ")
                     a_miss = attestation_stats.split(", ")[1].split(": ")
                     a_orph = attestation_stats.split(", ")[2].split(": ")
-                elif attributes[i][1] == "tofunft" or attributes[i][1] == "mithical":
+                elif attributes[i][1] == "tofunft":
                     soup = BeautifulSoup(page, "html5lib")
                     script = soup.find(id="__NEXT_DATA__").string
                     json_data = json.loads(script)
@@ -282,7 +282,9 @@ async def on_ready():
                         f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n"
                     )
                 elif attributes[i][1] == "defillama":
-                    consolePrint = f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${round(tvl,2):,}.\n"
+                    consolePrint = (
+                        f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${tvl:,}m.\n"
+                    )
                 elif attributes[i][1] == "opensea":
                     consolePrint = (
                         f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}.\n"
@@ -308,14 +310,9 @@ async def on_ready():
                         f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.\n"
                         f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n"
                     )
-                elif attributes[i][1] == "mithical":
-                    if attributes[i][2] == "floor":
-                        consolePrint = f"{dt.utcnow()} | {tickers[i]}: Ξ{floor}.\n"
-                    elif attributes[i][2] == "vol":
-                        consolePrint = f"{dt.utcnow()} | {tickers[i]}: Ξ{vol}.\n"
                 elif attributes[i][1] == "dopexapi":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}M.\n"
+                        f"{dt.utcnow()} | {tickers[i]} tvl: ${tvl:,}m.\n"
                         f"{dt.utcnow()} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
                     )
                 elif attributes[i][1] == "etherscan":
@@ -344,9 +341,9 @@ async def on_ready():
                                 nick=f"{tickers[i]}/{attributes[i][3].upper()} ₿{round(float(price), 4)}"
                             )
                         elif attributes[i][1] == "defillama":
-                            await guild.me.edit(nick=f"{tickers[i]} ${round(tvl,2):,}")
+                            await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}m")
                         elif attributes[i][2] == "market_cap":
-                            await guild.me.edit(nick=f"Mcap ${round(price,2):,}")
+                            await guild.me.edit(nick=f"MCAP ${price:,}m")
                         elif attributes[i][1] == "opensea":
                             await guild.me.edit(
                                 nick=f"{tickers[i]} Ξ{round(floor_price,2):,}"
@@ -359,13 +356,8 @@ async def on_ready():
                             )
                         elif attributes[i][1] == "tofunft":
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
-                        elif attributes[i][1] == "mithical":
-                            if attributes[i][2] == "floor":
-                                await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
-                            elif attributes[i][2] == "vol":
-                                await guild.me.edit(nick=f"{tickers[i]}: Ξ{vol}")
                         elif attributes[i][1] == "dopexapi":
-                            await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}M")
+                            await guild.me.edit(nick=f"{tickers[i]} ${tvl:,}m")
                         elif attributes[i][1] == "etherscan":
                             await guild.me.edit(
                                 nick=f"{fastGas:,} gwei ~{fastGasTime} sec"
@@ -414,8 +406,6 @@ async def on_ready():
                                     type=ActivityType.watching,
                                 )
                             )
-                        elif attributes[i][1] == "mithical":
-                            continue
                         elif attributes[i][1] == "defillama":
                             await clients[i].change_presence(
                                 activity=Activity(
