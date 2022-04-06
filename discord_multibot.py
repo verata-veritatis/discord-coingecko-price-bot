@@ -56,7 +56,7 @@ print("\n---------- V5 flim.eth's Discord Multibot ----------\n")
 # API & response code sanity check; also create list of tickers
 ################################################################################
 print(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
-logging.info(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
+# logging.info(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
 tickers = []
 status_code = 0
 
@@ -194,12 +194,25 @@ async def on_ready():
                     status_code = r.status_code
                 # handle for different use cases
                 if attributes[i][2] == "market_cap":
-                    price = r.json()["market_data"][attributes[i][2]][attributes[i][3]]
-                    pctchng = r.json()["market_data"]["fully_diluted_valuation"][
-                        attributes[i][3]
-                    ]
+                    price = round(
+                        float(
+                            r.json()["market_data"][attributes[i][2]][attributes[i][3]]
+                        )
+                        / 1000000,
+                        2,
+                    )
+                    fdv = round(
+                        float(
+                            r.json()["market_data"]["fully_diluted_valuation"][
+                                attributes[i][3]
+                            ]
+                        )
+                        / 1000000,
+                        2,
+                    )
                 elif attributes[i][1] == "defillama":
-                    tvl = r.json()
+                    # tvl = r.json()
+                    tvl = round(float(r.json()) / 1000000, 2)
                 elif attributes[i][1] == "opensea":
                     floor_price = r.json()["stats"][attributes[i][2]]
                     pctchng = r.json()["stats"]["seven_day_average_price"]
@@ -240,9 +253,15 @@ async def on_ready():
                     floor_dict = json_data["props"]["pageProps"]["data"]["contract"][
                         "stats"
                     ]["market_floor_price"]
-                    vol = json_data["props"]["pageProps"]["data"]["contract"]["stats"][
-                        "market_vol"
-                    ]
+
+                    vol = round(
+                        float(
+                            json_data["props"]["pageProps"]["data"]["contract"][
+                                "stats"
+                            ]["market_vol"]
+                        ),
+                        2,
+                    )
                     floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
                 elif attributes[i][1] == "dopexapi":
                     tvl = round(float(r.json()[attributes[i][2]]) / 1000000, 2)
@@ -278,8 +297,8 @@ async def on_ready():
                 consolePrint = ""
                 if attributes[i][2] == "market_cap":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}.\n"
-                        f"{dt.utcnow()} | JONES FDV: ${pctchng:,}.\n"
+                        f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}m.\n"
+                        f"{dt.utcnow()} | JONES FDV: ${fdv:,}m.\n"
                     )
                 elif attributes[i][1] == "defillama":
                     consolePrint = (
@@ -374,7 +393,7 @@ async def on_ready():
                         if attributes[i][2] == "market_cap":
                             await clients[i].change_presence(
                                 activity=Activity(
-                                    name=f"FDV: ${round(pctchng,2):,}",
+                                    name=f"FDV: ${round(fdv,2):,}m",
                                     type=ActivityType.watching,
                                 )
                             )
