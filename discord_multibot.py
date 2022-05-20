@@ -106,7 +106,7 @@ for i in range(len(bot_tokens)):
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
         token_name = r.json()["symbol"].upper()
         status_code = r.status_code
-    time.sleep(0.3)
+    # time.sleep(0.3)
     if status_code > 400:
         print(r.status_code)
         # logging.info(r.status_code)
@@ -192,6 +192,7 @@ async def on_ready():
                         f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}"
                     )
                     status_code = r.status_code
+
                 # handle for different use cases
                 if attributes[i][2] == "market_cap":
                     price = round(
