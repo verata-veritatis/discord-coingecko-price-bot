@@ -8,9 +8,40 @@ from discord import Activity, ActivityType, Client, errors
 from datetime import datetime as dt
 
 ################################################################################
-token_name = "bridgoor"
+# token_name = "bridgoor"
 # token_name = "halloween"
 ################################################################################
+
+
+### dopexapi v2 reworkd
+
+tokens = [
+            'RDPX',
+            'DPX',
+            'ETH'
+        ]
+
+tvl_dict = {}
+arb_chain_id = '42161'
+
+# issue request, format to json, get arbitrum chain SSOVs as list of dict's
+r = requests.get(f'https://api.dopex.io/api/v2/ssov').json()[arb_chain_id]
+
+
+# for all tokens in token list, get all active SSOVs & sum tvl by token
+for t in tokens:
+    # reset tvl varible with each new token
+    tvl = 0
+    # iterate thru SSOVs to find active SSOVs which match current token
+    for ssov in r:
+        for key, value in ssov.items():
+            if ssov['retired'] == False and ssov['underlyingSymbol'] == t:
+                # add tvl to cumulative tvl for given token & format to float
+                tvl += float(ssov['tvl'])
+                break
+    # add the token and tvl key value pair to the tvl dict
+    tvl_dict.update({t:tvl})
+print(tvl_dict)
 
 
 ### Opensea
@@ -36,12 +67,12 @@ token_name = "bridgoor"
 
 ### Defillama TVL
 
-r = requests.get(f"https://api.llama.fi/tvl/jones-dao")
-token_name = f"Vaults TVL"
-status_code = r.status_code
-tvl = r.json()
+# r = requests.get(f"https://api.llama.fi/tvl/jones-dao")
+# token_name = f"Vaults TVL"
+# status_code = r.status_code
+# tvl = r.json()
 
-print(tvl)
+# print(tvl)
 
 ### TofuNFT using urllib request
 # site = f"https://tofunft.com/collection/dopex-{token_name}/items"
