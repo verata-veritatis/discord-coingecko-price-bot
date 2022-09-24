@@ -82,7 +82,7 @@ for i in range(len(bot_tokens)):
         token_name = attributes[i][2].title()
         status_code = page.getcode()
     elif attributes[i][1] == "dopexapi":
-        r = requests.get(f'https://api.dopex.io/api/v2/ssov')
+        r = requests.get(f"https://api.dopex.io/api/v2/ssov")
         token_name = attributes[i][0].upper()
         status_code = r.status_code
     elif attributes[i][1] == "beaconchain":
@@ -138,6 +138,7 @@ async def on_ready():
     # logging.info(f"{dt.utcnow()} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
+            await asyncio.sleep(3)
             try:
                 # pick which operation / API
                 if attributes[i][1] == "opensea":
@@ -164,7 +165,7 @@ async def on_ready():
                     page = urlopen(r, context=context)
                     status_code = page.getcode()
                 elif attributes[i][1] == "dopexapi":
-                    r = requests.get(f'https://api.dopex.io/api/v2/ssov')
+                    r = requests.get(f"https://api.dopex.io/api/v2/ssov")
                     status_code = r.status_code
                 elif attributes[i][1] == "etherscan":
                     r = requests.get(
@@ -262,7 +263,7 @@ async def on_ready():
                     )
                     floor = floor_dict.pop("0x0000000000000000000000000000000000000000")
                 elif attributes[i][1] == "dopexapi":
-                    r = r.json()['42161']
+                    r = r.json()["42161"]
                     tvl_dict = {}
                     tokens = [attributes[i][0].upper()]
                     # for all tokens in token list, get all active SSOVs & sum tvl by token
@@ -272,12 +273,15 @@ async def on_ready():
                         # iterate thru SSOVs to find active SSOVs which match current token
                         for ssov in r:
                             for key, value in ssov.items():
-                                if ssov['retired'] == False and ssov['underlyingSymbol'] == t:
+                                if (
+                                    ssov["retired"] == False
+                                    and ssov["underlyingSymbol"] == t
+                                ):
                                     # add tvl to cumulative tvl for given token & format to float
-                                    tvl += float(ssov['tvl']) / 1000000
+                                    tvl += float(ssov["tvl"]) / 1000000
                                     break
                         # add the token and tvl key value pair to the tvl dict
-                        tvl_dict.update({t:tvl})
+                        tvl_dict.update({t: tvl})
                     # per witherblock these values should be added to Dopex API, but not yet
                     epoch = attributes[i][4]
                     epoch_month = attributes[i][5]
@@ -389,7 +393,9 @@ async def on_ready():
                         elif attributes[i][1] == "tofunft":
                             await guild.me.edit(nick=f"{tickers[i]}: Ξ{floor}")
                         elif attributes[i][1] == "dopexapi":
-                            await guild.me.edit(nick=f"{tickers[i]} ${round(tvl_dict[tickers[i]],2):,}m")
+                            await guild.me.edit(
+                                nick=f"{tickers[i]} ${round(tvl_dict[tickers[i]],2):,}m"
+                            )
                         elif attributes[i][1] == "etherscan":
                             await guild.me.edit(
                                 nick=f"{fastGas:,} gwei ~{fastGasTime} sec"
@@ -491,8 +497,8 @@ async def on_ready():
             except Exception as e:
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
                 # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
-            finally:
-                await asyncio.sleep(3)
+            # finally:
+            # await asyncio.sleep(3)
 
 
 ################################################################################
