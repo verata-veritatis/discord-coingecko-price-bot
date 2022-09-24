@@ -55,8 +55,8 @@ print("\n---------- V5 flim.eth's Discord Multibot ----------\n")
 ################################################################################
 # API & response code sanity check; also create list of tickers
 ################################################################################
-print(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
-# logging.info(f"{dt.utcnow()} | Checking CoinGecko & Opensea for market IDs.")
+print(f"{str(dt.utcnow())[:-7]} | Checking CoinGecko & Opensea for market IDs.")
+# logging.info(f"{str(dt.utcnow())[:-7]} | Checking CoinGecko & Opensea for market IDs.")
 tickers = []
 status_code = 0
 
@@ -109,18 +109,22 @@ for i in range(len(bot_tokens)):
     if status_code > 400:
         print(r.status_code)
         # logging.info(r.status_code)
-        print(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
-        # logging.info(f"{dt.utcnow()} | Could not find {attributes[i][0]}. Exiting...\n")
+        print(
+            f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n"
+        )
+        # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
         exit()
     else:
-        print(f"{dt.utcnow()} | Found {token_name}/{attributes[i][3].upper()}.")
-        # logging.info(f"{dt.utcnow()} | Found {token_name}/{attributes[i][3].upper()}.")
+        print(
+            f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}."
+        )
+        # logging.info(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
         tickers.append(token_name)
 ################################################################################
 # Start clients.
 ################################################################################
-print(f"\n{dt.utcnow()} | Starting Discord bot army of {len(bot_tokens)}.\n")
-# logging.info(f"\n{dt.utcnow()} | Starting Discord bot army of {len(bot_tokens)}.\n")
+print(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens)}.\n")
+# logging.info(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens)}.\n")
 clients = []
 
 for i in range(len(bot_tokens)):
@@ -134,8 +138,8 @@ client = clients[i]
 @client.event
 async def on_ready():
     errored_guilds = []
-    print(f"{dt.utcnow()} | Multibot is running.\n")
-    # logging.info(f"{dt.utcnow()} | Multibot is running.\n")
+    print(f"{str(dt.utcnow())[:-7]} | Multibot is running.\n")
+    # logging.info(f"{str(dt.utcnow())[:-7]} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
             await asyncio.sleep(3)
@@ -303,67 +307,67 @@ async def on_ready():
                     ][attributes[i][3]]
 
                 # print status code & bot number
-                print(f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}.")
-                print(f"{dt.utcnow()} | response status code: {status_code}.")
+                print(
+                    f"{str(dt.utcnow())[:-7]} | Discord bot: {i+1} of {len(bot_tokens)}."
+                )
+                print(f"{str(dt.utcnow())[:-7]} | response status code: {status_code}.")
                 # logging.info(
-                #     f"{dt.utcnow()} | Discord bot: {i+1} of {len(bot_tokens)}."
+                #     f"{str(dt.utcnow())[:-7]} | Discord bot: {i+1} of {len(bot_tokens)}."
                 # )
-                # logging.info(f"{dt.utcnow()} | response status code: {status_code}.")
+                # logging.info(f"{str(dt.utcnow())[:-7]} | response status code: {status_code}.")
 
                 # console printing logic
                 consolePrint = ""
                 if attributes[i][2] == "market_cap":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} Mcap: ${price:,}m.\n"
-                        f"{dt.utcnow()} | JONES FDV: ${fdv:,}m.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} Mcap: ${price:,}m.\n"
+                        f"{str(dt.utcnow())[:-7]} | JONES FDV: ${fdv:,}m.\n"
                     )
                 elif attributes[i][1] == "defillama":
-                    consolePrint = (
-                        f"{dt.utcnow()} | {attributes[i][0]} {tickers[i]}: ${tvl:,}m.\n"
-                    )
+                    consolePrint = f"{str(dt.utcnow())[:-7]} | {attributes[i][0]} {tickers[i]}: ${tvl:,}m.\n"
                 elif attributes[i][1] == "opensea":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} floor price: Ξ{floor_price}.\n"
-                        f"{dt.utcnow()} | {tickers[i]} 7d avg. price: Ξ{round(pctchng,2)}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} floor price: Ξ{floor_price}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} 7d avg. price: Ξ{round(pctchng,2)}.\n"
                     )
                 elif attributes[i][3] == "btc":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]}/{attributes[i][3].upper()}: ₿{price:,}.\n"
-                        f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]}/{attributes[i][3].upper()}: ₿{price:,}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
                     )
                 elif attributes[i][1] == "larvalabs":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} floor: {eth_floor}.\n"
-                        f"{dt.utcnow()} | {tickers[i]} floor: {usd_floor}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} floor: {eth_floor}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} floor: {usd_floor}.\n"
                     )
                 elif attributes[i][1] == "beaconchain":
                     consolePrint = (
-                        f"{dt.utcnow()} | blocks: {block_stats}.\n"
-                        f"{dt.utcnow()} | attestations: {attestation_stats}.\n"
+                        f"{str(dt.utcnow())[:-7]} | blocks: {block_stats}.\n"
+                        f"{str(dt.utcnow())[:-7]} | attestations: {attestation_stats}.\n"
                     )
                 elif attributes[i][1] == "tofunft":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} floor: Ξ{floor}.\n"
-                        f"{dt.utcnow()} | {tickers[i]} volume: Ξ{vol}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} floor: Ξ{floor}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} volume: Ξ{vol}.\n"
                     )
                 elif attributes[i][1] == "dopexapi":
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} SSOV tvl: ${round(tvl_dict[tickers[i]],2):,}m\n"
-                        f"{dt.utcnow()} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} SSOV tvl: ${round(tvl_dict[tickers[i]],2):,}m\n"
+                        # f"{str(dt.utcnow())[:-7]} | {tickers[i]} epoch: {epoch} | {epoch_month}.\n"
                     )
                 elif attributes[i][1] == "etherscan":
                     consolePrint = (
-                        f"{dt.utcnow()} | status code: {r.status_code}.\n"
-                        f"{dt.utcnow()} | suggested base fee: {suggestedBase}.\n"
-                        f"{dt.utcnow()} | fast gas: {fastGas}.\n"
-                        f"{dt.utcnow()} | fast gas wei : {fastGasWei}.\n"
-                        f"{dt.utcnow()} | fast priority: {fastPriority}.\n"
-                        f"{dt.utcnow()} | fast gas confirmation in seconds: {fastGasTime}.\n"
+                        f"{str(dt.utcnow())[:-7]} | status code: {r.status_code}.\n"
+                        f"{str(dt.utcnow())[:-7]} | suggested base fee: {suggestedBase}.\n"
+                        f"{str(dt.utcnow())[:-7]} | fast gas: {fastGas}.\n"
+                        f"{str(dt.utcnow())[:-7]} | fast gas wei : {fastGasWei}.\n"
+                        f"{str(dt.utcnow())[:-7]} | fast priority: {fastPriority}.\n"
+                        f"{str(dt.utcnow())[:-7]} | fast gas confirmation in seconds: {fastGasTime}.\n"
                     )
                 else:
                     consolePrint = (
-                        f"{dt.utcnow()} | {tickers[i]} price: ${price:,}.\n"
-                        f"{dt.utcnow()} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} price: ${price:,}.\n"
+                        f"{str(dt.utcnow())[:-7]} | {tickers[i]} 24hr % change: {round(pctchng,2)}%.\n"
                     )
 
                 print(consolePrint)
@@ -454,7 +458,8 @@ async def on_ready():
                         elif attributes[i][1] == "dopexapi":
                             await clients[i].change_presence(
                                 activity=Activity(
-                                    name=f"Epoch: {epoch} | {epoch_month}",
+                                    name=f"Current Epoch",
+                                    # : {epoch} | {epoch_month}",
                                     type=ActivityType.watching,
                                 )
                             )
@@ -475,25 +480,25 @@ async def on_ready():
                     except errors.Forbidden:
                         if guild not in errored_guilds:
                             print(
-                                f"{dt.utcnow()} | {guild}:{guild.id} hasn't set "
+                                f"{str(dt.utcnow())[:-7]} | {guild}:{guild.id} hasn't set "
                                 "nickname permissions for the bot!"
                             )
                             # logging.info(
-                            #     f"{dt.utcnow()} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
+                            #     f"{str(dt.utcnow())[:-7]} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
                             # )
                         errored_guilds.append(guild)
                     except Exception as e:
-                        print(f"{dt.utcnow()} | Unknown error: {e}.")
-                        # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
+                        print(f"{str(dt.utcnow())[:-7]} | Unknown error: {e}.")
+                        # logging.info(f"{str(dt.utcnow())[:-7]} | Unknown error: {e}.")
             except ValueError as e:
-                print(f"{dt.utcnow()} | ValueError: {e}.")
-                # logging.info(f"{dt.utcnow()} | ValueError: {e}.")
+                print(f"{str(dt.utcnow())[:-7]} | ValueError: {e}.")
+                # logging.info(f"{str(dt.utcnow())[:-7]} | ValueError: {e}.")
             except TypeError as e:
-                print(f"{dt.utcnow()} | TypeError: {e}.")
-                # logging.info(f"{dt.utcnow()} | TypeError: {e}.")
+                print(f"{str(dt.utcnow())[:-7]} | TypeError: {e}.")
+                # logging.info(f"{str(dt.utcnow())[:-7]} | TypeError: {e}.")
             except OSError as e:
-                print(f"{dt.utcnow()} | OSError: {e}.")
-                # logging.info(f"{dt.utcnow()} | OSError: {e}.")
+                print(f"{str(dt.utcnow())[:-7]} | OSError: {e}.")
+                # logging.info(f"{str(dt.utcnow())[:-7]} | OSError: {e}.")
             except Exception as e:
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
                 # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
