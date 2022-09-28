@@ -504,7 +504,7 @@ async def on_ready():
 ################################################################################
 # Run the clients.
 ################################################################################
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
 for i in range(len(clients)):
     loop.create_task(clients[i].start(bot_tokens[i]))
 loop.run_forever()
