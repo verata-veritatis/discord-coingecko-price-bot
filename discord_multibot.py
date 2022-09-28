@@ -32,7 +32,7 @@ import math
 
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
-from discord import Activity, ActivityType, Client, errors
+from discord import Activity, ActivityType, Client, Intents, errors
 from datetime import datetime as dt
 
 ################################################################################
@@ -127,8 +127,9 @@ print(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens
 # logging.info(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens)}.\n")
 clients = []
 
+intents = Intents.default()
 for i in range(len(bot_tokens)):
-    clients.append(Client())
+    clients.append(Client(intents=intents))
 ################################################################################
 # Client's on_ready event function. We do everything here.
 ################################################################################
@@ -220,9 +221,7 @@ async def on_ready():
                     floor_price = r.json()["stats"][attributes[i][2]]
                     pctchng = r.json()["stats"]["seven_day_average_price"]
                 elif attributes[i][1] == "larvalabs":
-                    soup = BeautifulSoup(
-                        r.content, "html5lib"
-                    )  # If this line causes an error, run 'pip install html5lib' or install html5lib
+                    soup = BeautifulSoup(r.content, "html.parser")
                     punk_stats = soup.findAll(
                         "div", attrs={"class": "col-md-4 punk-stat"}
                     )
@@ -231,10 +230,7 @@ async def on_ready():
                     eth_floor = "Ξ" + split[0]
                     usd_floor = split[1].lstrip("(").rstrip(" USD)")
                 elif attributes[i][1] == "beaconchain":
-                    soup = BeautifulSoup(
-                        r.content, "html5lib"
-                    )  # If this line causes an error, run 'pip install html5lib' or install html5lib
-
+                    soup = BeautifulSoup(r.content, "html.parser")
                     blocks = soup.find("span", attrs={"id": "blockCount"})
                     block_stats = blocks.attrs["title"].split("Blocks (")[1]
                     b_prop = block_stats.split(", ")[0].split(": ")
@@ -250,7 +246,7 @@ async def on_ready():
                     a_miss = attestation_stats.split(", ")[1].split(": ")
                     a_orph = attestation_stats.split(", ")[2].split(": ")
                 elif attributes[i][1] == "tofunft":
-                    soup = BeautifulSoup(page, "html5lib")
+                    soup = BeautifulSoup(page, "html.parser")
                     script = soup.find(id="__NEXT_DATA__").string
                     json_data = json.loads(script)
                     floor_dict = json_data["props"]["pageProps"]["data"]["contract"][
@@ -287,8 +283,8 @@ async def on_ready():
                         # add the token and tvl key value pair to the tvl dict
                         tvl_dict.update({t: tvl})
                     # per witherblock these values should be added to Dopex API, but not yet
-                    epoch = attributes[i][4]
-                    epoch_month = attributes[i][5]
+                    # epoch = attributes[i][4]
+                    # epoch_month = attributes[i][5]
                 elif attributes[i][1] == "etherscan":
                     r2 = requests.get(
                         "https://api.etherscan.io/api"
@@ -305,7 +301,6 @@ async def on_ready():
                     pctchng = r.json()["market_data"][
                         "price_change_percentage_24h_in_currency"
                     ][attributes[i][3]]
-
                 # print status code & bot number
                 print(
                     f"{str(dt.utcnow())[:-7]} | Discord bot: {i+1} of {len(bot_tokens)}."
