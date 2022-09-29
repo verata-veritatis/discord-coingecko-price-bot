@@ -482,9 +482,6 @@ async def on_ready():
                                 f"{str(dt.utcnow())[:-7]} | {guild}:{guild.id} hasn't set "
                                 "nickname permissions for the bot!"
                             )
-                            # logging.info(
-                            #     f"{str(dt.utcnow())[:-7]} | {guild}:{guild.id} hasn't set nickname permissions for the bot!"
-                            # )
                         errored_guilds.append(guild)
                     except Exception as e:
                         print(f"{str(dt.utcnow())[:-7]} | Unknown error: {e}.")
