@@ -148,7 +148,7 @@ async def on_ready():
     # logging.info(f"{str(dt.utcnow())[:-7]} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
-            await asyncio.sleep(3)
+            asyncio.sleep(3)
             try:
                 # pick which operation / API
                 if attributes[i][1] == "opensea":
@@ -162,7 +162,8 @@ async def on_ready():
                     )
                     status_code = r.status_code
                 elif attributes[i][1] == "larvalabs":
-                    r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+                    # r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+                    r = requests.get(f"https://cryptopunks.app/")
                     status_code = r.status_code
                 elif attributes[i][1] == "beaconchain":
                     r = requests.get(
