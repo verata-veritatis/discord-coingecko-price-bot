@@ -148,7 +148,7 @@ async def on_ready():
     # logging.info(f"{str(dt.utcnow())[:-7]} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
-            asyncio.sleep(3)
+            await asyncio.sleep(3)
             try:
                 # pick which operation / API
                 if attributes[i][1] == "opensea":
