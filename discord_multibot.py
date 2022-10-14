@@ -74,7 +74,8 @@ for i in range(len(bot_tokens)):
         ].upper()
         status_code = r.status_code
     elif attributes[i][1] == "larvalabs":
-        r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+        # r = requests.get(f"https://www.larvalabs.com/cryptopunks")
+        r = requests.get(f"https://cryptopunks.app/")
         token_name = attributes[i][0].upper()
         status_code = r.status_code
     elif attributes[i][1] == "tofunft":
