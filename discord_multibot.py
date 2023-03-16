@@ -106,25 +106,25 @@ for i in range(len(bot_tokens)):
     elif attributes[i][1] == "defillama":
         r = requests.get(f"https://api.llama.fi/{attributes[i][2]}/{attributes[i][0]}")
         token_name = attributes[i][2].upper()
+        status_code = r.status_code
     else:
         r = requests.get(f"https://api.coingecko.com/api/v3/coins/{attributes[i][0]}")
-        token_name = r.json()["symbol"].upper()
         status_code = r.status_code
-    # time.sleep(0.3)
-    if status_code > 400:
-        print(r.status_code)
-        # logging.info(r.status_code)
-        print(
-            f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n"
-        )
-        # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
-        exit()
-    else:
-        print(
-            f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}."
-        )
-        # logging.info(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
-        tickers.append(token_name)
+        if status_code > 400:
+            print(r.status_code)
+            # logging.info(r.status_code)
+            print(
+                f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n"
+            )
+            # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
+            exit()
+        token_name = r.json()["symbol"].upper()
+        time.sleep(5)  # protect against rate limiting
+    tickers.append(token_name)
+    print(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
+    # logging.info(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
+
+
 ################################################################################
 # Start clients.
 ################################################################################
@@ -501,7 +501,7 @@ async def on_ready():
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
                 # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
             # finally:
-            # await asyncio.sleep(3)
+            await asyncio.sleep(3)
 
 
 ################################################################################
