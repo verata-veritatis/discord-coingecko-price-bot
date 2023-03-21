@@ -114,7 +114,8 @@ for i in range(len(bot_tokens)):
             print(r.status_code)
             # logging.info(r.status_code)
             print(
-                f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n"
+                f"{str(dt.utcnow())[:-7]} | Error {status_code}."
+                + f" Could not find {attributes[i][0]}. Exiting...\n"
             )
             # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
             exit()
