@@ -21,7 +21,18 @@ tokens_dict = {
     ],}
 ```
 
-For python3.6+. Referenced libaries you'll need:
+## dependencies
+[beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
+```
+pip install beautifulsoup4
+```
+
+[discord.py](https://pypi.org/project/discord.py/)
+```
+pip install discord.py
+```
+
+Other referenced libaries:
 ``` 
 asyncio.py
 requests.py
@@ -29,10 +40,8 @@ tokens.py (this is the file mentioned above)
 time.py
 ssl.py
 json.py
-BeatifulSoup.py
 Request.py
 urlopen.py
-discord.py
 datetime.py
 requests.py
 math.py
