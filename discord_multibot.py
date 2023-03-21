@@ -120,7 +120,7 @@ for i in range(len(bot_tokens)):
             # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
             exit()
         token_name = r.json()["symbol"].upper()
-        time.sleep(5)  # protect against rate limiting
+        time.sleep(9)  # protect against rate limiting
     tickers.append(token_name)
     print(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
     # logging.info(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
@@ -149,7 +149,6 @@ async def on_ready():
     # logging.info(f"{str(dt.utcnow())[:-7]} | Multibot is running.\n")
     while True:
         for i in range(len(clients)):
-            await asyncio.sleep(3)
             try:
                 # pick which operation / API
                 if attributes[i][1] == "opensea":
@@ -502,7 +501,7 @@ async def on_ready():
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
                 # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
             # finally:
-            await asyncio.sleep(3)
+            await asyncio.sleep(6)
 
 
 ################################################################################
