@@ -23,6 +23,9 @@ import time
 import ssl
 import json
 import math
+import aiohttp  # should use this per below
+
+# https://discordpy.readthedocs.io/en/stable/faq.html#what-does-blocking-mean
 
 # import logging
 
@@ -37,6 +40,7 @@ import math
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from discord import Activity, ActivityType, Client, Intents, errors
+from discord.ext import tasks
 from datetime import datetime as dt
 
 ################################################################################
@@ -97,9 +101,9 @@ for i in range(len(bot_tokens)):
     elif attributes[i][0] == "gas":
         r = requests.get(
             "https://api.etherscan.io/api"
-            "?module=gastracke"
-            "r&action=gasorac"
-            f"le&apikey={attributes[i][2]}"
+            "?module=gastracker"
+            "&action=gasoracle"
+            f"&apikey={attributes[i][2]}"
         )
         token_name = attributes[i][0].upper()
         status_code = r.status_code
@@ -120,14 +124,14 @@ for i in range(len(bot_tokens)):
             # logging.info(f"{str(dt.utcnow())[:-7]} | Could not find {attributes[i][0]}. Exiting...\n")
             exit()
         token_name = r.json()["symbol"].upper()
-        time.sleep(9)  # protect against rate limiting
+    time.sleep(2)  # protect against rate limiting
     tickers.append(token_name)
     print(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
     # logging.info(f"{str(dt.utcnow())[:-7]} | Found {token_name}/{attributes[i][3].upper()}.")
 
 
 ################################################################################
-# Start clients.
+# Start clients and set intents.
 ################################################################################
 print(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens)}.\n")
 # logging.info(f"\n{str(dt.utcnow())[:-7]} | Starting Discord bot army of {len(bot_tokens)}.\n")
@@ -140,6 +144,14 @@ for i in range(len(bot_tokens)):
 # Client's on_ready event function. We do everything here.
 ################################################################################
 client = clients[i]
+
+
+# update April 2023 per FAQ:
+# https://discordpy.readthedocs.io/en/stable/faq.html#general
+# It is highly discouraged to use Client.change_presence() or API calls
+#   in on_ready as this event may be called many times while running, not just once
+#   I should refactor this out of my code
+#   seem like this is a good approach
 
 
 @client.event
@@ -501,13 +513,14 @@ async def on_ready():
                 print(f"{dt.utcnow()} | Unknown error: {e}.")
                 # logging.info(f"{dt.utcnow()} | Unknown error: {e}.")
             # finally:
-            await asyncio.sleep(6)
+            await asyncio.sleep(3)
 
 
 ################################################################################
 # Run the clients.
 ################################################################################
 loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 for i in range(len(clients)):
     loop.create_task(clients[i].start(bot_tokens[i]))
 loop.run_forever()
